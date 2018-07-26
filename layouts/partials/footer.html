@@ -2,4 +2,27 @@
   <hr class="dn db-l ml0-l gray w3"><br>
   Powered by <a href="https://gohugo.io/" target="_blank" class="link gray dim">Hugo</a>, based on the <a href="https://github.com/lingxz/er" target="_blank" class="link gray dim">Er</a> theme. <br>
   {{ with .Site.Copyright }}{{ . }}{{end}}
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      displayAlign: "center",
+      displayIndent: "0em",
+
+      "HTML-CSS": { scale: 100,
+		    linebreaks: { automatic: "false" },
+		    webFont: "TeX"
+		  },
+      SVG: {scale: 100,
+	    linebreaks: { automatic: "false" },
+	    font: "TeX"},
+      NativeMML: {scale: 100},
+      TeX: { equationNumbers: {autoNumber: "AMS"},
+	     MultLineWidth: "85%",
+	     TagSide: "right",
+	     TagIndent: ".8em"
+	   }
+    });
+  </script>
+  <!-- https://gohugo.io/content-management/formats/#mathjax-with-hugo -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script> -->
 </footer>
