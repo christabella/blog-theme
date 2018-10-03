@@ -12,6 +12,7 @@ body { color: var(--body-text-color); background-color: var(--background-color);
 }
 .post-content p, .post-content ul {
   margin: 0;
+  margin-bottom: 0.5rem; /* Spacing between paragraphs */
 }
 main a:hover, .list-pages a:hover, .pagination a:hover, #tag-cloud a:hover { 
   border-bottom: 1px solid var(--body-text-color);
