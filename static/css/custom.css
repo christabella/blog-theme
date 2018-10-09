@@ -1,0 +1,7 @@
+.reveal p, .reveal li, .reveal ul{
+  font-size: 95%;
+}
+
+.reveal table {
+  font-size: 60%;
+}
