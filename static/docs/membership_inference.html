@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Membership Inference Attacks Against Machine Learning Models</title>
+    <meta name="author" content="(Christabella Irwanto)"/>
+    <style type="text/css">
+      .underline { text-decoration: underline; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/white.css" id="theme"/>
+
+    <link rel="stylesheet" href="https://bella.cc/css/custom.css"/>
+
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+      if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+      }
+    </script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+	<section>
+	  <section id="slide-orgf88ffc0">
+	    <h2 id="orgf88ffc0">Membership Inference Attacks against Machine Learning Models</h2>
+	    <p>
+	      Reza Shokri, Marco Stronati, Congzheng Song, and Vitaly Shmatikov (2017)
+	    </p>
+
+	    <p>
+	      <i>Presented by Christabella Irwanto</i>
+	    </p>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org64a8e8a">
+	    <h3 id="org64a8e8a">Machine learning as a service</h3>
+
+	    <div class="figure">
+	      <p><img src="https://bella.cc/img/membership/screenshot_2018-10-07_14-12-51.png" alt="screenshot_2018-10-07_14-12-51.png" />
+	      </p>
+	    </div>
+	    <aside class="notes">
+	      <p>
+		The elements of output vector are in [0, 1] and sum up to 1.
+	      </p>
+
+	    </aside>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org929b090">
+	    <h3 id="org929b090">Machine learning privacy</h3>
+
+	    <div class="figure">
+	      <p><img src="https://bella.cc/img/membership/screenshot_2018-10-07_14-13-10.png" alt="screenshot_2018-10-07_14-13-10.png" />
+	      </p>
+	    </div>
+	    <aside class="notes">
+	      <p>
+		In the context of the overall ML pipeline, we are considering a malicious client
+	      </p>
+
+	    </aside>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-orgb7d62da">
+	    <h3 id="orgb7d62da">Basic membership inference attack</h3>
+	    <p>
+	      <img src="https://bella.cc/img/membership/screenshot_2018-10-07_14-42-17.png" alt="screenshot_2018-10-07_14-42-17.png" />
+	      E.g. patients’ clinical records in disease-related models.
+	    </p>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-orgfef2b22">
+	    <h3 id="orgfef2b22">Adversary model</h3>
+	    <ul>
+	      <li class="fragment appear"><b>😈 Who</b>: malicious client</li>
+	      <li class="fragment appear"><b>🕔 Attack time</b>: inference</li>
+	      <li class="fragment appear"><b>🥅 Goal</b>: compromise training data integrity
+		<ul>
+		  <li>determine if a data record  \(\mathbf{x}\) was in the model \(f_{target}\)’s (sensitive) training dataset \(D^{train}_{target}\)</li>
+
+	      </ul></li>
+	      <li class="fragment appear"><b>💪 Capability</b>: 
+		<ul>
+		  <li>labeled data record \((\mathbf{x}, y)\)</li>
+		  <li>model query access to obtain prediction vector \(\mathbf{y}\) for \(\mathbf{x}\)</li>
+		  <li>format of inputs and outputs, e.g. shape and range of values</li>
+		  <li>either
+		    <ul>
+		      <li>(1) architecture and training algorithm of model, or</li>
+		      <li>(2) black-box access to the oracle (e.g., a “ML as a service” platform) that was used to train the model</li>
+
+		  </ul></li>
+
+	      </ul></li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org1f6d9b1">
+	    <h3 id="org1f6d9b1">Key contributions 🔑</h3>
+	    <ul>
+	      <li class="fragment appear">Turn membership inference into a <i>binary classification</i> problem</li>
+	      <li class="fragment appear">Invent <b>“shadow training technique”</b> to mimic black-box models</li>
+	      <li class="fragment appear">Develop 3 <b>effective methods to generate training data</b> for the shadow models</li>
+	      <li class="fragment appear"><b>Evaluate membership inference techniques</b> against neural networks, Amazon ML, and Google Prediction API on realistic tasks successfully</li>
+	      <li class="fragment appear"><b>Quantify how membership leakage relates to performance and overfitting</b></li>
+	      <li class="fragment appear">Evaluate <b>mitigation strategies</b></li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org18edfb7">
+	    <h2 id="org18edfb7">Membership inference approach</h2>
+	    <p>
+	      For a given labeled data record  \((\mathbf{x}, y)\) and a model \(f\)’s prediction vector \(\mathbf{y} = f(\mathbf{x})\), determine if \((\mathbf{x}, y)\) was in the model’s training dataset \(D^{train}_{target}\)
+	    </p>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org2df175b">
+	    <h3 id="org2df175b">How is this even possible?</h3>
+	    <ul>
+	      <li class="fragment appear">Intuition: machine learning models often behave differently on <span class="underline">data that they were trained on</span> 🐵 versus <span class="underline">“unseen” data</span> 🙈
+		<ul>
+		  <li><b>Overfitting</b> is one of the reasons</li>
+
+	      </ul></li>
+	      <li class="fragment appear">We can construct an attack model that <b>learns this behaviour difference</b></li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org6e9adb0">
+	    <h3 id="org6e9adb0">End-to-end attack process</h3>
+	    <ul>
+	      <li class="fragment appear">With labeled record \((\mathbf{x}, y)\), use target model \(f_{target}\) to compute prediction vector \(\mathbf{y} = f_{target}(\mathbf{x})\)</li>
+	      <li class="fragment appear">Attack model \(f_{attack}\) receives both true class label \(y\) and \(\mathbf{y}\)
+		<ul>
+		  <li>We need \(y\) since \(\mathbf{y}\)’s distribution depends heavily on it</li>
+
+	      </ul></li>
+	      <li class="fragment appear">\(f_{attack}\) computes membership probability \(Pr\{(\mathbf{x}, y) \in D^{train}_{target}\}\)</li>
+
+	    </ul>
+
+	    <div class="figure">
+	      <p><img src="https://bella.cc/img/membership/screenshot_2018-10-07_02-39-08.png" alt="screenshot_2018-10-07_02-39-08.png" width="700" />
+	      </p>
+	    </div>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-orgccb0557">
+	    <h3 id="orgccb0557">How to train \(f_{attack}\) without  detailed knowledge of \(f_{target}\) or its training set?</h3>
+	    <ul>
+	      <li class="fragment appear">Mimic target model with “shadow models”</li>
+	      <li class="fragment appear"><b>Train shadow models on proxy targets</b> for which we will know the membership ground truth
+		<ul>
+		  <li>Becomes supervised training</li>
+		  <li>A binary classification task predicting “in” or “out”</li>
+
+	      </ul></li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org82b5101">
+	    <h3 id="org82b5101">Shadow models</h3>
+	    <ul>
+	      <li class="fragment appear">\(k\) shadow models, each \(f^i_{shadow}\) trained on dataset \(D^{train}_{shadow^i}\) of same format and similar distribution as \(D^{train}_{target}\)</li>
+	      <li class="fragment appear">Assume worst case performance that \(\forall i, D^{train}_{shadow^i} \bigcap D^{train}_{target} = \emptyset\)</li>
+	      <li class="fragment appear">\(\uparrow k \implies \uparrow\) training fodder for \(f_{attack} \implies \uparrow\) accuracy of \(f_{attack}\)</li>
+
+	    </ul>
+
+	    <div class="figure">
+	      <p><img src="https://bella.cc/img/membership/screenshot_2018-10-07_02-47-43.png" alt="screenshot_2018-10-07_02-47-43.png" width="450" />
+	      </p>
+	    </div>
+
+	    <aside class="notes">
+	      <p>
+		Any overlap and the attack will perform better
+	      </p>
+
+	    </aside>
+	    <aside class="notes">
+	      <ul>
+		<li>The training datasets of the shadow models may overlap.</li>
+		<li>Shadow models must be trained similarly to target model, either with same training algorithm and model structure if known, or with the same ML service.</li>
+		<li>All models’ internal parameters are trained independently.</li>
+
+	      </ul>
+
+	    </aside>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org03642dd">
+	    <h3 id="org03642dd">Synthesizing datasets for \(f_{shadow}\)</h3>
+	    <ul>
+	      <li class="fragment appear"><b>Model-based synthesis</b>: Synthesize <span class="underline">high confidence records</span> on \(f_{target}\) from noise with hill-climbing search and sampling</li>
+	      <li class="fragment appear"><b>Statistics-based synthesis</b>: Requires <span class="underline">statistical information</span> about the population from which \(D^{training}_{target}\) was drawn
+		<ul>
+		  <li>Simulated by independently sampling from marginal distributions of each feature</li>
+
+	      </ul></li>
+	      <li class="fragment appear"><b>Noisy real data</b>: <span class="underline">Real data</span> from a different population or sampled non-uniformly
+		<ul>
+		  <li>Simulated by flipping binary values of 10% or 20% randomly selected features</li>
+
+	      </ul></li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org15cf95f">
+	    <h3 id="org15cf95f">Model-based synthesis</h3>
+
+	    <div class="figure">
+	      <p><img src="https://bella.cc/img/membership/screenshot_2018-10-08_13-32-37.png" alt="screenshot_2018-10-08_13-32-37.png" width="880" />
+	      </p>
+	    </div>
+
+	    <aside class="notes">
+	      <ul>
+		<li>(1) <b>Search</b> the space of possible data records to find high confidence inputs, and (2) <b>sample</b> from these records.</li>
+		<li>Initialization values sampled uniformly at random from entire possible range.</li>
+		<li>Hill-climbing objective
+		  <ul>
+		    <li><b>not met</b>: \(k\) features randomized again</li>
+		    <li><b>met, but not sufficient</b>: add to rejections count and reduce \(k\) if too many rejects
+		      <ul>
+			<li>controls diameter of search around accepted record</li>
+
+		    </ul></li>
+		    <li><b>met, and sufficient</b>: select record with probability \(y_c\)</li>
+
+		</ul></li>
+
+	      </ul>
+
+	    </aside>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org6345c78">
+	    <h3 id="org6345c78">Training dataset for \(f_{attack}\)</h3>
+	    <ul>
+	      <li class="fragment appear">Query each \(f^i_{shadow}\) with \(D^{train}_{shadow^i}\) and a disjoint  \(D^{test}_{shadow^i}\).
+		<ul>
+		  <li>\(\forall (\mathbf{x}, y) \in D^{train}_{shadow^i}\), get \(\mathbf{y} = f^i_{shadow}(\mathbf{x})\) and add \((y, \mathbf{y}, \text{in})\) to \(D^{train}_{attack}\)</li>
+		  <li>\(\forall (\mathbf{x}, y) \in D^{test}_{shadow^i}\), get \(\mathbf{y} = f^i_{shadow}(\mathbf{x})\) and add \((y, \mathbf{y}, \text{out})\) to \(D^{train}_{attack}\)</li>
+
+	      </ul></li>
+
+	    </ul>
+
+
+	    <div class="figure">
+	      <p><img src="https://bella.cc/img/membership/screenshot_2018-10-08_13-57-09.png" alt="screenshot_2018-10-08_13-57-09.png" />
+	      </p>
+	    </div>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org5df747b">
+	    <h3 id="org5df747b">Training \(f_{attack}\)</h3>
+	    <ul>
+	      <li class="fragment appear">Partition \(D^{train}_{attack}\) by class and train a <b>separate model for each class label \(y\)</b>
+		<ul>
+		  <li>Given \(\mathbf{x}\) and \(\mathbf{y}\), predict membership status (“in” or “out”) for \(\mathbf{x}\)</li>
+		  <li>Class-specific models \(\uparrow\) accuracy because the <span class="underline">true class heavily influences the target model’s behaviour</span> (produces different output distributions)</li>
+
+	      </ul></li>
+	      <li class="fragment appear"><p>
+		  If using method 1, <i>model-based synthesis</i>, the <b>records used in both  \(D^{training}_{target}\) and \(D^{test}_{target}\) have high confidence</b>
+		</p>
+		<ul>
+		  <li>\(\implies\) \(f_{attack}\) does not simply learn to classify “in” vs “out” based on high confidence, but performs a much subtler task</li>
+
+		</ul>
+		<ul>
+		  <li>Method-agnostic: can use any state-of-the-art machine learning framework or service to build the attack model</li>
+
+	      </ul></li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org3df56eb">
+	    <h2 id="org3df56eb">Experiments</h2>
+	    <ul>
+	      <li class="fragment appear"><b>Datasets</b> for classification
+		<ul>
+		  <li><span class="underline">CIFAR-10</span> and <span class="underline">CIFAR-100</span>: 32x32 color images</li>
+		  <li><span class="underline">Shopping purchases</span> to predict shopping style: 600 binary features
+		    <ul>
+		      <li>Performed clustering into different number of classes {2, 10, 20, 50, 100}</li>
+
+		  </ul></li>
+		  <li><span class="underline">Foursquare check-ins</span> to predict geosocial type: 446 binary features</li>
+		  <li><span class="underline">Texas hospital stays</span> to predict procedure: 6,170 binary features</li>
+		  <li><span class="underline">MNIST</span>: 32 x 32 monochrome images</li>
+		  <li><span class="underline">UCI Adult (Census Income)</span>: predict if annual income exceeds $50K</li>
+
+	      </ul></li>
+	      <li class="fragment appear"><b>Target models</b>
+		<ul>
+		  <li><span class="underline">Google Prediction API</span>: No configurations</li>
+		  <li><span class="underline">Amazon ML</span>: A few tweakable metaparameters; authors test defaults and one other configuration</li>
+		  <li><span class="underline">Standard CNN</span> for CIFAR and <span class="underline">standard fully-connected neural network</span> for purchases</li>
+
+	      </ul></li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org2dc95cc">
+	    <h2 id="org2dc95cc">Evaluation methodology</h2>
+	    <ul>
+	      <li class="fragment appear"><b>Equal number of members (“in”) and non-members (“out”)</b> to maximize uncertainty of inference; baseline accuracy is 0.5</li>
+	      <li class="fragment appear">Metrics
+		<ul>
+		  <li><b>✅ Precision</b>: what fraction of records inferred as members <i>are indeed members</i></li>
+		  <li><b>☂ Recall</b>: coverage, i.e. what fraction of members are <i>correctly inferred</i></li>
+
+	      </ul></li>
+	      <li class="fragment appear">Training datasets for different shadow models may overlap</li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-orgcd66645">
+	    <h3 id="orgcd66645">Results</h3>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org674955b">
+	    <h3 id="org674955b">Effect of overfitting</h3>
+	    <ul>
+	      <li class="fragment appear">Large gaps between training and test accuracy \(\implies\) overfitting</li>
+	      <li class="fragment appear">Larger test accuracy \(\implies\) 👍 generalizability, predictive power</li>
+	      <li class="fragment appear">\(\uparrow\) overfitting, \(\uparrow\) leakage (Fig. 11)… but only for same model type
+		<ul>
+		  <li><i>Amazon (100, 1e − 4)</i> overfits <b>and</b> leaks more than <i>Amazon (10, 1e − 6)</i></li>
+		  <li>But <i>Google</i> leaks more than both <i>Amazon</i> models, even if it is less overfitted and has generalizability
+		    <ul>
+		      <li>Overfitting is not the only factor in vulnerability; different model structures “remember” different amounts of information</li>
+
+		  </ul></li>
+
+	      </ul></li>
+
+	    </ul>
+
+	    <div class="figure">
+	      <p><img src="https://bella.cc/img/membership/screenshot_2018-10-08_18-04-32.png" alt="screenshot_2018-10-08_18-04-32.png" width="600" />
+	      </p>
+	    </div>
+
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-orgc04e4b7">
+	    <h3 id="orgc04e4b7">Precision on CIFAR against CNN (Fig. 4)</h3>
+	    <ul>
+	      <li class="fragment appear">Low accuracies (0.6 and 0.2) \(\implies\) heavily overfitted
+		<ul>
+		  <li>Precision follows the same pattern across all classes</li>
+		  <li>\(\uparrow\) training dataset size, \(\uparrow\) variance across classes and \(\downarrow\) precision</li>
+
+	      </ul></li>
+	      <li class="fragment appear">Attack performs much better than baseline, especially CIFAR-100
+		<ul>
+		  <li>The more classes, the more leakage because models need to “remember” more about training data</li>
+		  <li>CIFAR-100 is more overfitted to training dataset</li>
+
+	      </ul></li>
+
+	    </ul>
+
+	    <div class="figure">
+	      <p><img src="https://bella.cc/img/membership/screenshot_2018-10-08_18-40-35.png" alt="screenshot_2018-10-08_18-40-35.png" />
+	      </p>
+	    </div>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-orgb9a2731">
+	    <h3 id="orgb9a2731">Precision on Purchase Dataset against all target models</h3>
+	    <ul>
+	      <li class="fragment appear">Any point shows cumulative fraction of classes in y for which <span class="underline">the attacker can obtain a membership inference precision up to x</span></li>
+	      <li class="fragment appear"><b>50, 75, 90-percentiles of precision</b> are (0.74, 0.79, 0.84), (0.84, 0.88, 0.91), and (0.94, 0.97, 1) respectively
+		<ul>
+		  <li>E.g. 50% of classes get up to 0.74 precision for Amazon</li>
+
+	      </ul></li>
+	      <li class="fragment appear">Recall is close to 1 on all</li>
+
+	    </ul>
+
+	    <div class="figure">
+	      <p><img src="https://bella.cc/img/membership/screenshot_2018-10-08_22-13-33.png" alt="screenshot_2018-10-08_22-13-33.png" />
+	      </p>
+	    </div>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org545a3c7">
+	    <h3 id="org545a3c7">Failure modes</h3>
+	    <ul>
+	      <li class="fragment appear">Failed on MNIST (0.517 precision) because of small number of classes and lack of randomness in data in each class</li>
+	      <li class="fragment appear">Failed on Adult dataset, because
+		<ul>
+		  <li>Model is not overfitted</li>
+		  <li>Model is binary classifier, so attacker essentially has only has 1 signal to infer membership on</li>
+
+	      </ul></li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-orgd382848">
+	    <h3 id="orgd382848">Effect of noisy shadow data on precision (Fig. 8)</h3>
+
+	    <div class="figure">
+	      <p><img src="https://bella.cc/img/membership/screenshot_2018-10-08_22-42-51.png" alt="screenshot_2018-10-08_22-42-51.png" width="300" />
+	      </p>
+	    </div>
+
+	    <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+	      <colgroup>
+		<col  class="org-left" />
+
+		<col  class="org-right" />
+
+		<col  class="org-right" />
+
+		<col  class="org-right" />
+	      </colgroup>
+	      <tbody>
+		<tr>
+		  <td class="org-left">&#xa0;</td>
+		  <td class="org-right">Real data</td>
+		  <td class="org-right">10% noise</td>
+		  <td class="org-right">20% noise</td>
+		</tr>
+
+		<tr>
+		  <td class="org-left">Precision</td>
+		  <td class="org-right">0.678</td>
+		  <td class="org-right">0.666</td>
+		  <td class="org-right">0.613</td>
+		</tr>
+
+		<tr>
+		  <td class="org-left">Recall</td>
+		  <td class="org-right">0.98</td>
+		  <td class="org-right">0.99</td>
+		  <td class="org-right">1.00</td>
+		</tr>
+	      </tbody>
+	    </table>
+	    <ul>
+	      <li>Concludes that <b>attacks are robust even if assumptions about \(D^{training}_{target}\) are not very accurate</b></li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-orge377eb5">
+	    <h3 id="orge377eb5">Real data vs synthetic data (Fig. 9)</h3>
+	    <ul>
+	      <li>Overall precision: <b>0.935 on real data</b>, <b>0.795 for marginal-based synthetics</b>, <b>0.895 for model-based synthetics</b>
+		<ul>
+		  <li>Much lower for marginal-based but still very high for most classes</li>
+		  <li>Dual behaviour for model-based: mostly very high but a few very low
+		    <ul>
+		      <li>Because these classes make up &lt; 0.6% of \(D^{training}_{target}\)</li>
+
+		  </ul></li>
+		  <li>Concludes <b>attack can be trained with only black-box access</b></li>
+
+	      </ul></li>
+
+	    </ul>
+	    <aside class="notes">
+	      <p>
+		algorithm cannot synthesize representatives of these classes via search.
+	      </p>
+
+	    </aside>
+
+	    <div class="figure">
+	      <p><img src="https://bella.cc/img/membership/screenshot_2018-10-08_22-58-06.png" alt="screenshot_2018-10-08_22-58-06.png" width="380" />
+	      </p>
+	    </div>
+
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org8bd22a7">
+	    <h2 id="org8bd22a7">Why do the attacks work?</h2>
+	    <div class="outline-text-2" id="text-org8bd22a7">
+	    </div>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-orgba244a6">
+	    <h3 id="orgba244a6">Overfitting from train-test gap</h3>
+	    <p>
+	      Models with higher generalizability are less vulnerable to membership inference attack
+	    </p>
+
+	    <div class="figure">
+	      <p><img src="https://bella.cc/img/membership/screenshot_2018-10-09_00-01-05.png" alt="screenshot_2018-10-09_00-01-05.png" />
+	      </p>
+	    </div>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-orga5d20ec">
+	    <h3 id="orga5d20ec">Relating accuracy and uncertainty of \(\mathbf{y}\) to membership</h3>
+	    <ul>
+	      <li>Fig. 12: Differences between member vs non-member inputs’ 
+		<ul>
+		  <li>output metrics are more observable in the cases where attack is more successful (on purchase dataset with higher classes)</li>
+
+	      </ul></li>
+
+	    </ul>
+
+	    <div class="figure">
+	      <p><img src="https://bella.cc/img/membership/screenshot_2018-10-09_00-06-25.png" alt="screenshot_2018-10-09_00-06-25.png" width="800" />
+	      </p>
+	    </div>
+
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-orgf1c7ff3">
+	    <h2 id="orgf1c7ff3">Mitigation strategies</h2>
+	    <ul>
+	      <li class="fragment appear">Restrict prediction vector \(\mathbf{y}\) to top \(k\) classes</li>
+	      <li class="fragment appear">Round \(\mathbf{y}\) to \(d\) floating point digits</li>
+	      <li class="fragment appear">Increase entropy of \(\mathbf{y}\) by increasing normalizing temperature \(t\) of softmax layer</li>
+	      <li class="fragment appear">Use \(L_2\) -norm regularization with various factors \(\lambda\)</li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org9dd8ef4">
+	    <h2 id="org9dd8ef4">Evaluation of strategies</h2>
+	    <ul>
+	      <li class="fragment appear">Target model’s prediction accuracy maintained or improved (regularization)
+		<ul>
+		  <li>Unless regularization \(\lambda\) too large–need to be careful</li>
+		  <li>Nevertheless, regularization seems necessary and useful both for generalizing and decreasing information leakage</li>
+		  <li>Not just \(L_2\) -norm; dropout also shown to strengthen privacy guarantees</li>
+
+	      </ul></li>
+	      <li class="fragment appear">Overall, attack is robust against mitigation strategies
+		<ul>
+		  <li>Restriction to top \(k=1\) class is not enough, as <b>members and non-members are mislabeled differently</b></li>
+
+	      </ul></li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-orgbeedb0c">
+	    <h2 id="orgbeedb0c">Conclusion</h2>
+	    <ul>
+	      <li>First membership inference attack against machine learning models</li>
+	      <li>Shadow training technique using noisy data, or synthetic data without prior knowledge of \(D^{training}_{target}\)</li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org889723e">
+	    <h2 id="org889723e">Related work in data privacy threats in ML</h2>
+	    <div class="outline-text-2" id="text-org889723e">
+	    </div>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org900eb1a">
+	    <h3 id="org900eb1a">Model inversion</h3>
+	    <ul>
+	      <li>Authors took Fredrikson (2015), ran model inversion on CIFAR-10.
+		<ul>
+		  <li>If images in a class are diverse, “reconstructions” from model inversion are semantically meaningless</li>
+		  <li>Model inversion produces an average of a class and does not reconstruct any specific image, nor infer membership</li>
+
+	      </ul></li>
+
+	    </ul>
+
+	    <div class="figure">
+	      <p><img src="https://bella.cc/img/membership/screenshot_2018-10-09_01-32-02.png" alt="screenshot_2018-10-09_01-32-02.png" width="700" />
+	      </p>
+	    </div>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org3a19985">
+	    <h3 id="org3a19985">Privacy-preserving machine learning</h3>
+	    <ul>
+	      <li class="fragment appear">❎ Secure multiparty computation (SMC), or training on encrypted data, would not mitigate inference attacks</li>
+	      <li class="fragment appear">✅ Differential private models are, by construction, secure against the attack (this Friday)</li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org2e7be48">
+	    <h3 id="org2e7be48">ML Models that Remember Too Much (MTRTM)</h3>
+	    <ul>
+	      <li class="fragment appear">If this paper is a “side channel”, MTRTM is like a “covert channel”
+		<ul>
+		  <li>Malicious training algorithm intentionally designed to leak information</li>
+
+	      </ul></li>
+	      <li class="fragment appear">Differences
+		<ul>
+		  <li><span class="underline">Extent of information leakage</span>: Membership inference only vs up to 70% of corpus</li>
+		  <li><span class="underline">Relies on low generalizability of \(f\)</span> vs. <span class="underline">aims for high generalizability</span></li>
+
+	      </ul></li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-orgab4b87d">
+	    <h2 id="orgab4b87d">Commentary</h2>
+	    <ul>
+	      <li class="fragment appear">👍 Simplicity, intuition, many experiments, novelty</li>
+	      <li class="fragment appear">Good evaluation and synthesis of related work</li>
+	      <li class="fragment appear">Pick fewer binary datasets, attacks mostly performed quite poorly because of reasons mentioned (not enough signal for attack to extract useful membership information)
+		<ul>
+		  <li>Should have more real-valued features in datasets</li>
+		  <li>Why choose CIFAR to have locally-hosted target model? Because they have the largest training set? Would like to understand more of the reasons behind certain choices made.</li>
+
+	      </ul></li>
+	      <li class="fragment appear">Some missing/hard-to-find information, e.g. in Fig. 12, which method used for shadow training data (to explain low prediction confidence for Google membership )
+		<ul>
+		  <li><a href="https://github.com/csong27/membership-inference">Code for running experiments</a></li>
+
+	      </ul></li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-orgaccf531">
+	    <h2 id="orgaccf531">Commentary</h2>
+	    <ul>
+	      <li class="fragment appear">Why the higher the training dataset, the lower the precision, both overall (Fig. 1) and within each class (Fig. 11)? More overfitting, more signals…?</li>
+	      <li class="fragment appear">Empirical CDF diagrams are a little confusing</li>
+	      <li class="fragment appear">Why 10% and 20% noise, is that realistic? 20% a lot worse than 10% as well.</li>
+	      <li class="fragment appear">Should the "out" data records for \(f_{attack}\) not all belong in the test set of the shadow models? Does it matter?</li>
+	      <li class="fragment appear">Can you synthesize an adversarial example accidentally with model-based synthesis, and would it matter?</li>
+
+	    </ul>
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-orge5f3330">
+	    <h2 id="orge5f3330">Discussion topics 🤔</h2>
+	    <ul>
+	      <li class="fragment appear">Realistic applications
+		<ul>
+		  <li>Do the paper’s results have “substantial practical privacy implications”?</li>
+		  <li>Or is this approach more practically useful as an evaluation metric, if lack of information leakage correlates to how well a model is regularized/generalizes?</li>
+		  <li>Also to measure effectiveness of privacy preserving techniques</li>
+
+	      </ul></li>
+	      <li class="fragment appear">When should ML service providers be held accountable for training their models in a privacy-preserving manner?</li>
+	      <li class="fragment appear">Having more generalizable models will both increase privacy and utility. Is this the root characteristic of a good ML model?</li>
+
+	    </ul>
+
+	  </section>
+	</section>
+	<section>
+	  <section id="slide-org25ef58e">
+	    <h2 id="org25ef58e">Discussion topics 🤔</h2>
+	    <ul>
+	      <li class="fragment appear">Scalability with number of classes, train a different \(f_{attack}\) for each class label \(y\).
+		<ul>
+		  <li>Also mode-based data synthesis method needs possibly many queries, especially as the size of the possible input space grows</li>
+
+	      </ul></li>
+	      <li class="fragment appear">How to extend to regression models?</li>
+	      <li class="fragment appear">How do differences in model structures affect information leakage?</li>
+
+	    </ul>
+	  </section>
+	</section>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+
+    <script>
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+
+      controls: false,
+      progress: true,
+      history: false,
+      center: true,
+      slideNumber: 'c',
+      rollingLinks: false,
+      keyboard: true,
+      overview: true,
+
+      theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+      transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/fade/none
+      transitionSpeed: 'default',
+      multiplex: {
+      secret: '', // null if client
+      id: '', // id, obtained from socket.io server
+      url: '' // Location of socket.io server
+      },
+
+      // Optional libraries used to extend on reveal.js
+      dependencies: [
+      { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+      { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+      });
+    </script>
+  </body>
+</html>
