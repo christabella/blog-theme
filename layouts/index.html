@@ -7,12 +7,21 @@
   <div id="terminal"></div>
 
   <script>
-    const welcome_message_filename = 'misc/welcome_message.txt'  // Read this
-    fetch(welcome_message_filename)
+    const welcome_banner_filename = 'misc/welcome_message.txt'  // Load ASCII banner
+    fetch(welcome_banner_filename)
   .then(response => response.text())
   .then(text => document.getElementsByTagName("pre")[0].innerText = text)
 
-    var terminal = new Terminal('terminal', {welcome: "", prompt: '♥', separator: '❤'}, {
+    const welcome_messsage = `Welcome to my homepage!
+<br>
+ 🐙 <a class="external" href="https://github.com/christabella" target="_blank">Github</a> | 
+👔 <a class="external" href="http://www.linkedin.com/in/cirwanto" target="_blank">LinkedIn</a> | 
+📔 <a class="external" href="http://bella.cc/blog" target="_blank">Blog</a>
+<br>
+With that out of the way, feel free to explore this space!
+`
+
+    var terminal = new Terminal('terminal', {welcome: welcome_messsage, prompt: '🍻', separator: '~'}, {
       execute: function(cmd, args) {
 	switch (cmd) {
 	case 'clear':
@@ -21,7 +30,7 @@
 
 	case 'help':
 	  return `Commands: clear, help, theme, ver or version<br>
-Made by customized with <a class="external" href="http://github.com/sasadjolic/dom-terminal" target="_blank">dom-terminal</a>`;
+`;
 
 	case 'theme':
 	  if (args && args[0]) {
@@ -37,7 +46,7 @@ Made by customized with <a class="external" href="http://github.com/sasadjolic/d
 
 	default:
 	  // Unknown command.
-	  return "Unknown command '%s'" % cmd;
+	  return `Unknown command '${cmd}' 🤷 <br>Use 'help' to see *some* available commands!`;
 	};
       }
     });
