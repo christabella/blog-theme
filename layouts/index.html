@@ -1,24 +1,45 @@
-{{ define "main" }}
-{{ $paginator := .Paginate (where .Data.Pages "Type" "in" .Site.Params.mainSections) }}
-<main class="center mv4 content-width ph3">
-  <ul class="list pa0">
-    {{ range $paginator.Pages }}
-    <li class="mb2">
-      <a class="f4 heading-color heading-font fw6 no-underline" href="{{ .Permalink }}">{{ .Title }}</a>
-      <p class="f5 mt1 silver">
-        <time>{{ .Date.Format "02 Jan 2006" }}</time>
-        {{ if or .Params.tags .Params.categories }} | {{ end }}
-        {{ if isset .Params "categories" }}
-        categories: [ {{ range .Params.categories }}<a href='{{ "/categories/" | relLangURL }}{{ . | urlize }}' class="link silver">{{ . }}</a> {{ end }} ]
-        {{ end }}
-        {{ if isset .Params "tags" }}
-        tags: [ {{ range .Params.tags }}<a href='{{ "/tags/" | relLangURL }}{{ . | urlize }}' class="link silver">{{ . }}</a> {{ end }} ]
-        {{ end }}
-      </p>
-    </li>
-    {{ end }}
-  </ul>
-</main>
-{{ partial "tag_cloud.html" . }}
-{{ partial "pagination.html" . }}
-{{ end }}
+<!doctype html>
+<html lang="en">
+  <head>
+    <script src="js/terminal-1.0.2.min.js"></script>
+    <link rel="stylesheet" media="all" href="css/terminal-1.0.2.min.css">
+  </head>
+  <div id="terminal"></div>
+
+  <script>
+    const welcome_message_filename = 'welome_message.txt'  // Read this
+    fetch(welcome_message_filename)
+  .then(response => response.text())
+  .then(text => document.getElementsByTagName("pre")[0].innerText = text)
+
+    var terminal = new Terminal('terminal', {welcome: "", prompt: '♥', separator: '❤'}, {
+      execute: function(cmd, args) {
+	switch (cmd) {
+	case 'clear':
+	  terminal.clear();
+	  return '';
+
+	case 'help':
+	  return `Commands: clear, help, theme, ver or version<br>
+Made by customized with <a class="external" href="http://github.com/sasadjolic/dom-terminal" target="_blank">dom-terminal</a>`;
+
+	case 'theme':
+	  if (args && args[0]) {
+	    if (args.length > 1) return 'Too many arguments';
+	    else if (args[0].match(/^interlaced|modern|white$/)) { terminal.setTheme(args[0]); return ''; }
+	    else return 'Invalid theme';
+	  }
+	  return terminal.getTheme();
+
+	case 'ver':
+	case 'version':
+	  return '0.0.1 (beta)';
+
+	default:
+	  // Unknown command.
+	  return "Unknown command '%s'" % cmd;
+	};
+      }
+    });
+    </script>
+</html>
