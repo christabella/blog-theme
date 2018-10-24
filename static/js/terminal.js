@@ -8,7 +8,7 @@
         welcome: "",
         prompt: "",
         separator: "&gt;",
-        theme: "interlaced"
+        theme: "modern"
       };
 
       var options = options || defaults;
