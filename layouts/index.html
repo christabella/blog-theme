@@ -19,7 +19,7 @@
 👔 <a class="external" href="https://www.linkedin.com/in/cirwanto" target="_blank">LinkedIn</a> | 
 📔 <a class="external" href="https://bella.cc/blog" target="_blank">Blog</a>
 <br>
-With that out of the way, feel free to explore this space!
+With that out of the way, feel free to explore this space 🚀~
 `
 
     var terminal = new Terminal('terminal', {welcome: welcome_messsage, prompt: '🍻', separator: '~'}, {
@@ -30,7 +30,7 @@ With that out of the way, feel free to explore this space!
 	  return '';
 
 	case 'help':
-	  return `Commands: clear, help, theme, ver or version<br>
+	  return `Commands: clear, help, theme, ver, whoami <br>
 `;
 
 	case 'theme':
@@ -39,15 +39,19 @@ With that out of the way, feel free to explore this space!
 	    else if (args[0].match(/^interlaced|modern|white$/)) { terminal.setTheme(args[0]); return ''; }
 	    else return 'Invalid theme';
 	  }
-	  return terminal.getTheme();
+	  const theme = terminal.getTheme();
+	  return `The current theme is: ${theme}. <br>Usage: theme [modern|interlaced|white]`
 
 	case 'ver':
 	case 'version':
 	  return '0.0.1 (beta)';
 
+	case 'whoami':
+	  return `A lovely visitor! Have a great day 💖.`
+
 	default:
 	  // Unknown command.
-	  return `Unknown command '${cmd}' 🤷 <br>Use 'help' to see *some* available commands!`;
+	  return `Unknown command '${cmd}' 🤷 <br>Use 'help' to see <b>some</b> available commands!`;
 	};
       }
     });
