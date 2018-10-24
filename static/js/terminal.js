@@ -35,6 +35,7 @@
           '<div class="background"><div class="interlace"></div></div>',
           '<div class="container">',
           "<pre></pre>",
+          "<p></p>",
           "<output></output>",
           '<table class="input-line">',
           '<tr><td nowrap><div class="prompt">' +
@@ -48,7 +49,7 @@
       var _container = _terminal.querySelector(".container");
       var _inputLine = _container.querySelector(".input-line");
       var _cmdLine = _container.querySelector(".input-line .cmdline");
-      var _pre = _container.querySelector("pre");
+      var _p = _container.querySelector("p");
       var _output = _container.querySelector("output");
       var _prompt = _container.querySelector(".prompt");
       var _background = document.querySelector(".background");
@@ -66,12 +67,8 @@
       );
 
       if (options.welcome) {
-        output(options.welcome);
+        _p.insertAdjacentHTML("beforeEnd", options.welcome);
       }
-
-      // if (options.welcome_banner) {
-      //   _pre.insertAdjacentHTML('beforeEnd', options.welcome_banner);
-      // }
 
       window.addEventListener(
         "click",
