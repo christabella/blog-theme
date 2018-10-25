@@ -18,11 +18,20 @@
   <div id="terminal"></div>
 
   <script>
+    function randomChoice(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
     const welcome_banner_filename = 'misc/welcome_message.txt'  // Load ASCII banner
     fetch(welcome_banner_filename)
   .then(response => response.text())
   .then(text => document.getElementsByTagName("pre")[0].innerText = text)
 
+    var jokes = []
+    const jokesPromise = fetch('misc/jokes.txt').then(
+      response => response.text()).then(
+	text => jokes = text.split('\n')
+      )
     const welcome_messsage = `Welcome to my homepage!
 <br>
  🐙 <a class="external" href="https://github.com/christabella" target="_blank">Github</a> | 
@@ -40,7 +49,7 @@ With that out of the way, feel free to explore this space 🚀~
 	  return '';
 
 	case 'help':
-	  return `Commands: clear, help, theme, ver, whoami <br>
+	  return `Commands: clear, joke, theme, ver, whoami <br>
 `;
 
 	case 'theme':
@@ -58,6 +67,9 @@ With that out of the way, feel free to explore this space 🚀~
 
 	case 'whoami':
 	  return `A lovely visitor! Have a great day 💖.`
+
+        case 'joke':
+	  return randomChoice(jokes);
 
 	default:
 	  // Unknown command.
