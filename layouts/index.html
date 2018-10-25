@@ -18,9 +18,7 @@
   <div id="terminal"></div>
 
   <script>
-    function randomChoice(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
+    const randomChoice = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
     const welcome_banner_filename = 'misc/welcome_message.txt'  // Load ASCII banner
     fetch(welcome_banner_filename)
