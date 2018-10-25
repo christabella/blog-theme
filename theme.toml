@@ -13,3 +13,6 @@ min_version = "0.38"
 [author]
   name = "Lingyi Hu"
   homepage = "https://theconfused.me"
+
+[params]
+  favicon = 'blog_favicon.ico'

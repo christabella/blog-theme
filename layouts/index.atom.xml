@@ -2,7 +2,7 @@
   {{ if .IsHome }}
     <title>{{ .Title }}</title>
   {{ else }}
-    <title>{{ .Title }} - {{ .Site.Title }}</title>
+    <title>{{ .Site.Title }}</title>
   {{ end }}
   <link href="{{ .Permalink }}index.xml" rel="self"/>
   <link href="{{ .Permalink }}"/>{{ if not .Date.IsZero }}
