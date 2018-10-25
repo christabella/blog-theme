@@ -28,7 +28,8 @@
     var jokes = []
     const jokesPromise = fetch('misc/jokes.txt').then(
       response => response.text()).then(
-	text => jokes = text.split('\n')
+	// Strip trailing newline and split by newlines
+	text => jokes = text.replace(/\n$/, "").split('\n')
       )
     const welcome_messsage = `Welcome to my homepage!
 <br>
