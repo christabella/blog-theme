@@ -32,6 +32,3 @@
 .terminal-white .container{text-shadow:none;}
 .terminal-white .container output pre{color:black;font-family:Inconsolata, monospace;}
 .terminal-white .prompt{color:#02f;}
-@media screen and (max-width:800px) {
-  body{font-size: xx-large;}
-}

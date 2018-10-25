@@ -17,7 +17,13 @@ pre {
 }
 
 @media (max-width: 600px) {
-  p, output {
-    font-size: 1.6rem !important;
+  pre {  /* Welcome banner */
+    font-size: 0.4rem;
+  }
+  p, output, table {  /* All other text */
+    font-size: 0.9rem;
+  }
+  div.container {
+    padding: 16px !important;  /* Narrower margins for mobile */
   }
 }
