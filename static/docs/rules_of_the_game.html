@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Motivating the Rules of the Game for Adversarial Example Research</title>
+<meta name="author" content="(Christabella Irwanto)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/white.css" id="theme"/>
+
+<link rel="stylesheet" href="https://bella.cc/css/custom.css"/>
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section>
+<section id="slide-orgcda3d5a">
+<h2 id="orgcda3d5a">Motivating the Rules of the Game for Adversarial Example Research</h2>
+<p>
+Justin Gilmer, Ryan P. Adams, Ian Goodfellow, David Andersen, George E. Dahl (July 2018)
+</p>
+
+<p>
+<i>Presented by Christabella Irwanto</i>
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org0ae881a">
+<h2 id="org0ae881a">Goals of the paper</h2>
+<ul>
+<li class="fragment appear">Taking a step back and evaluating the relevance of adversarial ML in <i>the real world</i></li>
+<li class="fragment appear">Adversarial example defense papers mostly consider <b>abstract, toy games</b> that do not relate to any specific security concern</li>
+<li class="fragment appear">Lacking <b>precise threat models</b> important in security</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org3742a5c">
+<h2 id="org3742a5c">Background and definitions</h2>
+<ul>
+<li class="fragment appear"><b>“Perturbation defense” literature</b>: <i>motivated by security concerns</i> and proposing defenses against <i>unrealistically-restricted perturbations</i>
+<ul>
+<li class="fragment appear">Adversarial example = <span class="underline">restricted perturbation of a correct example</span></li>
+<li class="fragment appear">Assume “perceptibility” of perturbations is a security risk</li>
+<li class="fragment appear">Started by Szegedy’s “Intriguing properties of neural networks”</li>
+
+</ul></li>
+<li class="fragment appear"><b>Adversarial example</b>: an input to a machine learning model <i>intentionally designed to cause the model to make a mistake</i> (Goodfellow et al. [1])
+<ul>
+<li class="fragment appear">The example itself could be <b>anything</b></li>
+
+</ul></li>
+
+</ul>
+<aside class="notes">
+<p>
+…and not motivated by generalization performance or biological mimicry, rather than security
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-org9c2d187">
+<h2 id="org9c2d187">Key contributions 🔑</h2>
+<ul>
+<li class="fragment appear">Establish taxonomy of plausible adversary models</li>
+<li class="fragment appear">Place recent literature within the taxonomy</li>
+<li class="fragment appear">Recommend a path forward for future work
+<ul>
+<li>Clearly articulate threat model</li>
+<li>More meaningful evaluation</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org27cb1ea">
+<h2 id="org27cb1ea">Possible rules of the game</h2>
+<p>
+To study security, we need a threat model that is
+</p>
+<ul>
+<li>well defined</li>
+<li>clearly stated</li>
+<li>inspired by realistic systems</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgb9aa63d">
+<h3 id="orgb9aa63d">Goals of the attacker</h3>
+<ul>
+<li class="fragment appear"><b>Targeted</b> attack
+<ul>
+<li>Induce a <i>specific</i> error, e.g.  🐱  ➡ 🐶</li>
+
+</ul></li>
+<li class="fragment appear"><b>Untargeted</b> attack
+<ul>
+<li>Induce <i>any</i> error, e.g. 🐱 ➡ 🐶 /  🐼 / 🦁 / 🐷 ❓</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org23f0430">
+<h3 id="org23f0430">Knowledge of the attacker</h3>
+<ul>
+<li class="fragment appear">🐵 “Whitebox”
+<ul>
+<li>Full knowledge of model internals and training data</li>
+
+</ul></li>
+<li class="fragment appear">🙈 “Blackbox” query access
+<ul>
+<li>System details are unknown but it can be queried</li>
+
+</ul></li>
+<li class="fragment appear">❓Partial knowledge 
+<ul>
+<li>Between the two extremes</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org3dd233b">
+<h3 id="org3dd233b">Who goes first, and is the game repeated?</h3>
+<ul>
+<li class="fragment appear">Defense strategies:
+<ul>
+<li class="fragment appear"><b>“Reactive”</b>: defender can adapt to current attacks</li>
+<li class="fragment appear"><b>“Proactive”</b>: defender must anticipate the all potential attack distributions</li>
+
+</ul></li>
+<li class="fragment appear">In current literature, generally <b>defender goes first</b> and must be <b>proactive</b></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgda59900">
+<h3 id="orgda59900">Action space of the attacker</h3>
+<p>
+What are they allowed to do?
+</p>
+
+<div class="figure">
+<p><img src="img/rules_of_the_game/screenshot_20181104_171053.png" alt="screenshot_20181104_171053.png" width="600" />
+</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org4605de7">
+<h3 id="org4605de7">Action space of the attacker</h3>
+<p>
+Can they do this instead?
+</p>
+
+<div class="figure">
+<p><img src="img/rules_of_the_game/screenshot_20181104_171110.png" alt="screenshot_20181104_171110.png" width="800" />
+</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org5f66dba">
+<h3 id="org5f66dba">Action space of the attacker</h3>
+<p>
+Can they pick their own starting point?
+</p>
+
+<div class="figure">
+<p><img src="img/rules_of_the_game/screenshot_20181104_224849.png" alt="screenshot_20181104_224849.png" width="800" />
+</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org2d87715">
+<h3 id="org2d87715">Action spaces</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Security setting</th>
+<th scope="col" class="org-left">Constraints on input (human perception)</th>
+<th scope="col" class="org-left">Starting point</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Indistinguishable <b>perturbation</b></td>
+<td class="org-left">Changes must be <span class="underline">undetectable</span></td>
+<td class="org-left">Fixed</td>
+</tr>
+
+<tr>
+<td class="org-left">Content-preserving <b>perturbation</b></td>
+<td class="org-left">Change must <span class="underline">preserve content</span></td>
+<td class="org-left">Fixed</td>
+</tr>
+
+<tr>
+<td class="org-left">Non-suspicious <b>input</b></td>
+<td class="org-left">Input must look real</td>
+<td class="org-left">Any input</td>
+</tr>
+
+<tr>
+<td class="org-left">Content-constrained <b>input</b></td>
+<td class="org-left">Input must preserve content or function</td>
+<td class="org-left">Any input</td>
+</tr>
+
+<tr>
+<td class="org-left">Unconstrained</td>
+<td class="org-left">Any</td>
+<td class="org-left">Any</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section>
+<section id="slide-org92469c2">
+<h3 id="org92469c2">Content-constrained input</h3>
+<ul>
+<li class="fragment appear"><b>Any</b> input \(X\) with desired content or payload</li>
+<li class="fragment appear">E.g. image spam can start from anything as long as it delivers an advertisement, and evades machine detection (<i>untargeted</i> attack)
+<ul>
+<li>Repeated game</li>
+
+</ul></li>
+<li class="fragment appear">Other examples: malware, content trolling</li>
+
+</ul>
+
+<div class="figure">
+<p><img src="img/rules_of_the_game/screenshot_20181104_171649.png" alt="screenshot_20181104_171649.png" width="400" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgd239f8c">
+<h3 id="orgd239f8c">Non-suspicious input</h3>
+<ul>
+<li class="fragment appear"><b>Any</b> \(X\) that would appear to a human to be real</li>
+<li class="fragment appear">E.g. “Voice assistant attack”
+<ul>
+<li>Perturb white noise/music etc. to be interpreted as a command (Carlini et al. [83])</li>
+
+</ul></li>
+
+</ul>
+
+<div class="figure">
+<p><img src="img/rules_of_the_game/screenshot_20181104_172303.png" alt="screenshot_20181104_172303.png" width="400" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgf93568b">
+<h3 id="orgf93568b">Unconstrained input</h3>
+<ul>
+<li class="fragment appear">Any \(X\) with no constraints whatsoever</li>
+<li class="fragment appear">E.g. “voice assistant” scenario variations, iPhone FaceID unlock</li>
+
+</ul>
+<p width="500">
+<img src="img/rules_of_the_game/screenshot_20181104_172433.png" alt="screenshot_20181104_172433.png" width="500" />
+<a href="https://wired.com/story/hackers-say-broke-face-id-security/">https://wired.com/story/hackers-say-broke-face-id-security/</a>
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-org24be8d7">
+<h3 id="org24be8d7">Content-preserving perturbation</h3>
+<ul>
+<li class="fragment appear">Perturb <i>a particular \(X\)</i> in a way that preserves content</li>
+<li class="fragment appear">The space of content-preserving perturbations:</li>
+
+</ul>
+
+<div class="figure">
+<p><img src="img/rules_of_the_game/screenshot_20181104_172736.png" alt="screenshot_20181104_172736.png" width="500" />
+</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org2841754">
+<h3 id="org2841754">Content-preserving perturbation</h3>
+<ul>
+<li>E.g. “pay-per-view” attack
+<ul>
+<li>Perturb video to evade detection, but preserve content</li>
+<li>Viewers will tolerate huge perturbations</li>
+
+</ul></li>
+
+</ul>
+<p width="500">
+<img src="img/rules_of_the_game/screenshot_20181104_172852.png" alt="screenshot_20181104_172852.png" width="500" />
+<a href="https://qz.com/721615/smart-pirates-are-fooling-youtubes-copyright-bots-by-hiding-movies-in-360-degree-videos">https://qz.com/721615/smart-pirates-are-fooling-youtubes-copyright-bots-by-hiding-movies-in-360-degree-videos</a> 
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org9dc15ad">
+<h3 id="org9dc15ad">Imperceptible perturbation</h3>
+<ul>
+<li class="fragment appear">Perturb a particular \(X\) in a way that is <b>imperceptible to a human</b></li>
+<li class="fragment appear">E.g. ??? 404
+<ul>
+<li>Imperceptibility can help with deniability, or longer evasion of detection, but it is not <i>required</i></li>
+
+</ul></li>
+<li class="fragment appear">Makes large assumptions about the attacker</li>
+<li class="fragment appear">Robustness metric was not intended to be a realistic threat model, but as a toy game</li>
+
+</ul>
+
+<div class="figure">
+<p><img src="img/rules_of_the_game/screenshot_20181104_172707.png" alt="screenshot_20181104_172707.png" width="300" />
+</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org68b6912">
+<h2 id="org68b6912">Recent literature</h2>
+<ul>
+<li class="fragment appear">Most perturbation defense papers surveyed assume
+<ul>
+<li>Fixed initial sample drawn from data distribution</li>
+<li>Sample can be perturbed with \(l_p\) norm \(< \epsilon\)</li>
+
+</ul></li>
+<li class="fragment appear">Often unclear if defense is proactive or reactive</li>
+<li class="fragment appear">Optimization problem to find worst case perturbation  \(\displaystyle \delta_{adv} = \arg\max_{\substack{||\delta||_p < \epsilon}} L(x + \delta, y)\)</li>
+
+<li class="fragment appear">Evaluation metric is “adversarial robustness”, \(\mathbb{E}_{(x, y)\sim p(x, y)} [\mathbb{1}(f(x+\delta_{adv}) \neq y)]\)
+<ul>
+<li>\(f(x)\) is model’s prediction on \(x\), and \(y\) is \(x\)’s true label</li>
+<li>Probability that a random \(x\) is with distance \(\epsilon\) of a misclassified sample</li>
+
+</ul></li>
+
+</ul>
+<aside class="notes">
+<p>
+probability that a random \(x\) is with distance \(\epsilon\) of a misclassified sample
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-orga506e78">
+<h2 id="orga506e78">Problems with measuring robustness</h2>
+<ul>
+<li>Evaluating \(l_p\) robustness is NP-hard</li>
+<li>Frequent cycles of falsification</li>
+
+</ul>
+
+<div class="figure">
+<p><img src="img/rules_of_the_game/screenshot_20181105_163123.png" alt="screenshot_20181105_163123.png" width="500" />
+</p>
+</div>
+
+<div class="figure">
+<p><img src="img/rules_of_the_game/screenshot_20181105_163200.png" alt="screenshot_20181105_163200.png" width="500" />
+</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org6cbd42c">
+<h2 id="org6cbd42c">Robustness is a misleading metric</h2>
+<p>
+Suspicious adversarial defenses
+</p>
+<ul>
+<li class="fragment appear"><b>Hardness inversion</b>: robustness against a <span class="underline">more powerful attacker</span>  (e.g. whitebox/untargeted) is <b>higher</b> than <span class="underline">weaker attacker</span> (e.g. blackbox/targeted)</li>
+<li class="fragment appear">Symptom of <i>incomplete evaluation</i>, e.g. stuck in local optimum/gradient masking</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgcf7c62d">
+<h2 id="orgcf7c62d">Where does it fit in the taxonomy?</h2>
+<ul>
+<li class="fragment appear">Closest fit for current literature is in <span class="underline">indistinguishable perturbation</span> ruleset</li>
+<li class="fragment appear">Standard ruleset is weakly motivated</li>
+<li class="fragment appear">Does not fit perfectly in the taxonomy of realistic rulesets</li>
+<li class="fragment appear">Even if we take the <i>spirit</i> of the literature’s ruleset…</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org810b8ad">
+<h2 id="org810b8ad">\(l_p \neq\) perceived similarity</h2>
+<ul>
+<li class="fragment appear">\(l_p\) is not even a good approximation for what humans see
+<ul>
+<li>E.g. 1 pixel translation of image: imperceptible but huge \(l_p\) norm</li>
+
+</ul></li>
+<li class="fragment appear">Depends on psychometric factors
+<ul>
+<li>Given time to make decision? Motivated to look closely?</li>
+
+</ul></li>
+
+</ul>
+
+<div class="figure">
+<p><img src="img/rules_of_the_game/screenshot_20181105_095655.png" alt="screenshot_20181105_095655.png" width="400" />
+</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org7407c08">
+<h2 id="org7407c08">Plausibility of examples in literature</h2>
+<p>
+If security is the motivation, we should 
+</p>
+<ul>
+<li class="fragment appear">Study the most realistic ruleset</li>
+<li class="fragment appear">Consider real-world threats</li>
+
+</ul>
+<p class="fragment (appear)">
+Let’s look at <i>common motivating scenarios</i> for the standard ruleset in the literature
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org3f12056">
+<h3 id="org3f12056">Stop Sign Attack</h3>
+<ul>
+<li class="fragment appear">“Adversarial street sign” to fool self-driving cars</li>
+<li class="fragment appear">Imperceptible perturbations are not strictly required</li>
+<li class="fragment appear">High-effort compared to…</li>
+
+</ul>
+
+<div class="figure">
+<p><img src="img/rules_of_the_game/screenshot_20181105_165637.png" alt="screenshot_20181105_165637.png" width="500" />
+</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org0b8559b">
+<h3 id="org0b8559b">Knocked-over Stop Sign Attack</h3>
+<p>
+… simply covering sign, or knocking it over
+</p>
+
+<div class="figure">
+<p><img src="img/rules_of_the_game/screenshot_20181105_170003.png" alt="screenshot_20181105_170003.png" width="500" />
+</p>
+</div>
+
+<p>
+<i>Figure 3: “knocked over stop sign attack” is 100% successful in “tricking” the model, robust to lighting and perspective changes, and even worse, already occurs “in the wild”!</i>
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org646c736">
+<h3 id="org646c736">Evading Malware Detection</h3>
+<ul>
+<li class="fragment appear">Restricted \(l_0\) changes to malware binary’s feature vector</li>
+<li class="fragment appear">Fits in the <span class="underline">content-constrained input</span> ruleset, but not in the <span class="underline">standard ruleset</span></li>
+<li class="fragment appear">Why would malware authors restrict themselves?</li>
+<li class="fragment appear">Vast space of code alterations preserving essential functionality</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org508eff4">
+<h3 id="org508eff4">Fooling Facial Recognition 👓</h3>
+<ul>
+<li class="fragment appear"><b>Compelling only for weaker attacker action space constraints</b> than the standard rules</li>
+<li class="fragment appear">“Accessorize to a crime” (Sharif et al.) considers attacker impersonating someone to enter restricted area</li>
+<li class="fragment appear">Glasses would fool face recognition system</li>
+<li class="fragment appear">But… high quality prosthetic disguise would fool <b>both</b> human guards and face recognition system</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgf1c52e1">
+<h2 id="orgf1c52e1">Test Set Attack</h2>
+
+<div class="figure">
+<p><img src="img/rules_of_the_game/screenshot_20181105_175526.png" alt="screenshot_20181105_175526.png" width="500" />
+</p>
+</div>
+<ul>
+<li class="fragment appear">Litmus test: pray some random \(x\) will be misclassified, i.e. <b>the naïve adversarial example</b></li>
+<li class="fragment appear"><b>Non-zero error rate</b> on test set \(\implies\) vulnerability to test set attack \(\implies\) <b>existence of adversarial examples</b>
+<ul>
+<li>Many existing defenses <b>increase test error</b></li>
+
+</ul></li>
+<li class="fragment appear">Variation: <b>randomly perturbing</b> an image, also effective in inducing errors [107]</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-orgb74cdce">
+<h2 id="orgb74cdce">Evaluating errors realistically</h2>
+<ul>
+<li class="fragment appear">Researchers should attempt to approximate actual deployment conditions
+<ul>
+<li>E.g. How prevalent is the adversary’s presence?</li>
+
+</ul></li>
+<li class="fragment appear">Balancing <span class="underline">accuracy on IID test set</span> vs. <span class="underline">on adversarial examples</span></li>
+
+</ul>
+
+<div class="figure">
+<p><img src="img/rules_of_the_game/screenshot_20181106_124820.png" alt="screenshot_20181106_124820.png" width="500" />
+</p>
+</div>
+<ul>
+<li class="fragment appear"><b>Prop = 0</b> is unrealistically optimistic; <b>1</b> is pessimistic</li>
+<li class="fragment appear">To justify ALP,  attackers need to be present &gt; 7.1% of the time</li>
+<li class="fragment appear">M-PGD model is never preferred</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org1142b75">
+<h2 id="org1142b75">Moving forward</h2>
+<ul>
+<li class="fragment appear">Standard game rules not motivated by concrete security scenarios</li>
+<li class="fragment appear">Solutions to \(l_p\) problem e.g. Madry defense: <b>optimize metric directly</b>
+<ul>
+<li>Goodhart’s Law: <i>When a measure becomes a target, it ceases to be a good measure</i></li>
+<li>Not generalizing to other threat models</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org250ec00">
+<h2 id="org250ec00">Evaluating SOTA defense realistically</h2>
+<ul>
+<li class="fragment appear">Madry defense on MNIST unbroken within \(l_\infty\) rules</li>
+<li class="fragment appear">Suppose defense is for <span class="underline">revenge porn</span> attack (get photos of specific person past ML detector); MNIST as proxy
+<ul>
+<li class="fragment appear">“Modify background pixels” attack</li>
+<li class="fragment appear">“Lines” attack; required 6 (median) queries to find an error</li>
+<li class="fragment appear">Defense only designed against small perturbations in \(l_1\) and not other metrics, let alone content preservation</li>
+
+</ul></li>
+
+</ul>
+
+<div class="figure">
+<p><img src="img/rules_of_the_game/screenshot_20181106_132413.png" alt="screenshot_20181106_132413.png" width="300" />
+</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org229184b">
+<h2 id="org229184b">Don’t forget simpler attacks</h2>
+<ul>
+<li class="fragment appear">Explore robustness to <span class="underline">whitebox adversary</span> in <b>untargeted content preservation setting</b></li>
+<li class="fragment appear">But also robustness to  <span class="underline">high-likelihood, simplistic blackbox attacks</span> (e.g. test set attack, simple transformations)</li>
+<li class="fragment appear">Content preserving image transformations remains largely unexplored in the literature
+<ul>
+<li>Transformations considered in Engstrom et al. [107] and Verma et al. [122] are a good start</li>
+
+</ul></li>
+
+</ul>
+
+<aside class="notes">
+<p>
+Vikas Verma, Alex Lamb, Christopher Beckham, Aaron Courville, Ioannis Mitliagkis, and Yoshua Bengio. “Manifold Mixup: Encouraging Meaningful On-Manifold Inter- polation as a Regularizer”. In: arXiv preprint arXiv:1806.05236 (2018).
+</p>
+
+<p>
+Logan Engstrom, Dimitris Tsipras, Ludwig Schmidt, and Aleksander Madry. “A Rotation and a Translation Su ce: Fooling CNNs with Simple Transformations”. In: arXiv preprint arXiv:1712.02779 (2017).
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-org5b8d147">
+<h2 id="org5b8d147">Security-centric proxy metrics</h2>
+<ul>
+<li class="fragment appear">Difficult to formalize “indistinguishable”/“content-preserving”/“non-suspicious”
+<ul>
+<li>\(l_p\) metric as a proxy for “indistinguishability” is not grounded in <i>human perception</i></li>
+
+</ul></li>
+<li class="fragment appear">Current best proxies for image content similarity rely on deep neural networks (Zhang et al. [123]) - - Cannot measure itself!</li>
+<li class="fragment appear">Short-term approach: hold-out distributions of <span class="underline">“content-preserving”</span> transformations
+<ul>
+<li>Generalization out of distribution is more reliable evaluation than performance on restricted worst-case attacks (NP-hard evaluation)</li>
+
+</ul></li>
+<li class="fragment appear"><span class="underline">Content-constrained</span> and <span class="underline">non-suspicious</span>: seem very domain-specific
+<ul>
+<li>Best to address specific, concrete threats before trying to generalize</li>
+<li>E.g. Defend “voice assistant” attack with user design: notify user for all commands</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org2e6c55e">
+<h2 id="org2e6c55e">Conclusion</h2>
+<ul>
+<li class="fragment appear">1. <b>Broaden definition</b> of adversarial examples
+<ul>
+<li class="fragment appear">Take extra care to build on prior work on ML security</li>
+<li class="fragment appear">Think like an attacker, realistic game rules</li>
+<li class="fragment appear">Consider real systems and attacks that exist in the wild</li>
+<li class="fragment appear">Develop new abstractions that capture realistic threat model</li>
+
+</ul></li>
+<li class="fragment appear">2. Recenter small perturbation defenses as <b>machine learning contributions instead of security</b>
+<ul>
+<li class="fragment appear">Errors are still errors worth removing if possible, regardless of source.</li>
+<li class="fragment appear">Better articulate motivations for study</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org380fdd7">
+<h2 id="org380fdd7">Discussion</h2>
+<ul>
+<li class="fragment appear">What are the ML-centric motivations for studying \(l_p\) perturbations shown by Szegedy?
+<ul>
+<li>Works on adversarial examples not motivated by security [81, 93, 106, 109–114]</li>
+<li>“Explaining and Harnessing Adversarial Examples”: Alternate way of evaluating model on <b>some</b> out-of-sample points, with norm ball metric: idea that changes smaller than some specific norm should never change the class [93]</li>
+<li>‘No free lunch’: adversarial training induces more semantically meaningful gradients and gives adversarial examples with GAN-like trajectories</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org4b10afc">
+<h2 id="org4b10afc">Discussion</h2>
+<ul>
+<li>Directions on building robustness to content-preserving transformations?
+<ul>
+<li>“Manifold Mixup: Encouraging Meaningful On-Manifold Interpolation as a Regularizer”</li>
+<li>“A Rotation and a Translation Suffice: Fooling CNNs with Simple Transformations”</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: false,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+});
+</script>
+</body>
+</html>
