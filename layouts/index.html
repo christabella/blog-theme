@@ -35,12 +35,16 @@
 <br>
  🐙 <a class="external" href="https://github.com/christabella" target="_blank">Github</a> | 
 👔 <a class="external" href="https://www.linkedin.com/in/cirwanto" target="_blank">LinkedIn</a> | 
-📔 <a class="external" href="https://bella.cc/blog" target="_blank">Blog</a>
+📔 <a class="external" href="https://bella.cc/blog" target="_blank">Blog</a> |
+🐦 <a class="external" href="https://twitter.com/hohoroboto" target="_blank">Twitter</a> |
+📷 <a class="external" href="https://www.instagram.com/bellawanto/" target="_blank">Instagram</a> |
+👥 <a class="external" href="https://www.facebook.com/christabella.irwanto" target="_blank">Facebook</a> |
+💻 <a class="external" href="https://app.codesignal.com/profile/christabella" target="_blank">CodeSignal</a>
 <br>
 With that out of the way, feel free to explore this space 🚀~
 `
 
-    var terminal = new Terminal('terminal', {welcome: welcome_messsage, prompt: '🍻', separator: '~'}, {
+    var terminal = new Terminal('terminal', {welcome: welcome_messsage, prompt: '', separator: '~'}, {
       execute: function(cmd, args) {
 	switch (cmd) {
 	case 'clear':
@@ -48,7 +52,7 @@ With that out of the way, feel free to explore this space 🚀~
 	  return '';
 
 	case 'help':
-	  return `Commands: clear, joke, theme, ver, whoami <br>
+	  return `Commands: clear, joke, theme, ver, whoami 🍻 <br>
 `;
 
 	case 'theme':
@@ -62,7 +66,13 @@ With that out of the way, feel free to explore this space 🚀~
 
 	case 'ver':
 	case 'version':
-	  return '0.0.1 (beta)';
+	  return `0.0.1 (beta)
+<br>
+🙇 Any feature requests, joke contributions, bug reports, or feedback? Or just want to chat?
+<br>
+💬 Shoot me <a href="mailto:christabella.irwanto@gmail.com">an email</a>, or message me on
+LinkedIn, Facebook, or say hi in real life if you can! When in Finland, my approximate location can usually be triangulated by Paniikki, Jämeräntaival 1, and Dipoli.
+`;
 
 	case 'whoami':
 	  return `A lovely visitor! Have a great day 💖.`
