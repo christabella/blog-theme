@@ -1,11 +1,3 @@
-.reveal p, .reveal li, .reveal ul{
-  font-size: 95%;
-}
-
-.reveal table {
-  font-size: 60%;
-}
-
 pre {
   /* Rainbow gradient on <pre> tag */
   background-image: -webkit-gradient( linear, left top, right top, color-stop(0, #F03339), color-stop(0.1, #F47A37), color-stop(0.2, #F2BC64), color-stop(0.3, #36BB5E), color-stop(0.4, #5079B9),color-stop(0.5, #7A5EA8), color-stop(0.6, #BC54A1), color-stop(1, #F03339) );
