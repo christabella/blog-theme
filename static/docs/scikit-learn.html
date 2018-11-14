@@ -5,7 +5,7 @@
 <title>scikit-learn in a nutshell 🥜</title>
 <meta name="author" content="(Christabella Irwanto)"/>
 <style type="text/css">
-  .underline { text-decoration: underline; }
+.underline { text-decoration: underline; }
 </style>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
 
@@ -15,534 +15,531 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/css/zenburn.css"/>
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
-  if( window.location.search.match( /print-pdf/gi ) ) {
-    var link = document.createElement( 'link' );
-    link.rel = 'stylesheet';
-    link.type = 'text/css';
-    link.href = 'https://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
-    document.getElementsByTagName( 'head' )[0].appendChild( link );
-  }
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
 </script>
 <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </head>
 <body>
-  <div class="reveal">
-    <div class="slides">
-      <section>
-	<section id="slide-orgd00b85f">
-	  <h2 id="orgd00b85f">scikit-learn in a nutshell 🥜</h2>
-	  <p>
-    14 Nov 2018
-  </p>
+<div class="reveal">
+<div class="slides">
+<section>
+<section id="slide-org60d117f">
+<h2 id="org60d117f">scikit-learn in a nutshell 🥜</h2>
+<p>
+14 Nov 2018
+</p>
 
-  <p>
-    <i>Presented by Christabella Irwanto</i>
-  </p>
+<p>
+<i>Presented by Christabella Irwanto</i>
+</p>
 
 </section>
 </section>
 <section>
-  <section id="slide-org44b8c2c">
-    <h2 id="org44b8c2c">Machine learning?</h2>
-    <p>
-      “Learn” from known data and <b>generalize</b> to unknown data
-    </p>
-    <ul>
-      <li><b>Classification</b> predicts a <span class="underline">discrete label</span> given input \(x\), e.g. kNN</li>
-      <li><b>Regression</b> predicts a <span class="underline">continuous value</span> given \(x\), e.g. linear regression</li>
+<section id="slide-orgfdcee73">
+<h2 id="orgfdcee73">Machine learning?</h2>
+<p>
+“Learn” from known data and <b>generalize</b> to unknown data
+</p>
+<ul>
+<li><b>Classification</b> predicts a <span class="underline">discrete label</span> given input \(x\), e.g. kNN</li>
+<li><b>Regression</b> predicts a <span class="underline">continuous value</span> given \(x\), e.g. linear regression</li>
 
-    </ul>
+</ul>
 
-    <div class="figure">
-      <p><img src="/ox-hugo/Classification-vs-Regression_20181113_204223.png" alt="Classification-vs-Regression_20181113_204223.png" width="600" />
-      </p>
-    </div>
-  </section>
+<div class="figure">
+<p><img src="../img/scikit-learn/Classification-vs-Regression_20181113_204223.png" alt="Classification-vs-Regression_20181113_204223.png" width="600" />
+</p>
+</div>
+</section>
 </section>
 <section>
-  <section id="slide-org79035f1">
-    <h2 id="org79035f1">What about scikit-learn?</h2>
-    <ul>
-      <li>Collection of tools for machine learning in Python</li>
-      <li>Built on NumPy and SciPy (scientific computing)</li>
+<section id="slide-orgb171650">
+<h2 id="orgb171650">What about scikit-learn?</h2>
+<ul>
+<li>Collection of tools for machine learning in Python</li>
+<li>Built on NumPy and SciPy (scientific computing)</li>
 
-    </ul>
+</ul>
 
-    <div class="figure">
-      <p><img src="/ox-hugo/sklearn.png" alt="sklearn.png" width="550" />
-      </p>
-    </div>
+<div class="figure">
+<p><img src="../img/scikit-learn/sklearn.png" alt="sklearn.png" width="550" />
+</p>
+</div>
 
-  </section>
+</section>
 </section>
 <section>
-  <section id="slide-orgf12b043">
-    <h2 id="orgf12b043">Input data matrix</h2>
-    <ul>
-      <li class="fragment appear">data is expected to be “array-like” (e.g. 2-d <code>np.array</code>) or <code>scipy.sparse</code> matrix</li>
-      <li class="fragment appear">shape of <code>[n_samples, n_features]</code>
-	<ul>
-	  <li><code>n_samples</code>: no. of items, e.g. documents/images/rows in a CSV</li>
-	  <li><code>n_features</code>: no. of traits describing each item</li>
+<section id="slide-org082d77e">
+<h2 id="org082d77e">Input data matrix</h2>
+<ul>
+<li class="fragment appear">data is expected to be “array-like” (e.g. 2-d <code>np.array</code>) or <code>scipy.sparse</code> matrix</li>
+<li class="fragment appear">shape of <code>[n_samples, n_features]</code>
+<ul>
+<li><code>n_samples</code>: no. of items, e.g. documents/images/rows in a CSV</li>
+<li><code>n_features</code>: no. of traits describing each item</li>
 
-      </ul></li>
-      <li class="fragment appear">high dimensional data of mostly zero-valued features \(\implies\) <code>scipy.sparse</code> matrices are more memory-efficient</li>
+</ul></li>
+<li class="fragment appear">high dimensional data of mostly zero-valued features \(\implies\) <code>scipy.sparse</code> matrices are more memory-efficient</li>
 
-    </ul>
-  </section>
+</ul>
+</section>
 </section>
 <section>
-  <section id="slide-orga2e9eaa">
-    <h2 id="orga2e9eaa">Datasets</h2>
-    <ul>
-      <li>Easily <b>load and fetch</b> <a href="https://scikit-learn.org/stable/datasets/index.html#datasets">datasets</a>
-	<ul>
-	  <li class="fragment appear"><span class="underline">Toy (small) datasets</span> 👶 e.g. Boston house prices, Iris plants, handwritten digits, …</li>
-	  <li class="fragment appear"><span class="underline">Real world datasets</span> 💼 e.g. Olivetti faces, 20 newsgroups text documents, …</li>
-	  <li class="fragment appear"><span class="underline">Artificial datasets</span>, e.g. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_moons.html#sklearn.datasets.make_moons">make_moons</a>, make_blobs, make_swiss_roll 🍥</li>
+<section id="slide-orgc15f009">
+<h2 id="orgc15f009">Datasets</h2>
+<ul>
+<li>Easily <b>load and fetch</b> <a href="https://scikit-learn.org/stable/datasets/index.html#datasets">datasets</a>
+<ul>
+<li class="fragment appear"><span class="underline">Toy (small) datasets</span> 👶 e.g. Boston house prices, Iris plants, handwritten digits, …</li>
+<li class="fragment appear"><span class="underline">Real world datasets</span> 💼 e.g. Olivetti faces, 20 newsgroups text documents, …</li>
+<li class="fragment appear"><span class="underline">Artificial datasets</span>, e.g. <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_moons.html#sklearn.datasets.make_moons">make_moons</a>, make_blobs, make_swiss_roll 🍥</li>
 
-      </ul></li>
+</ul></li>
 
-    </ul>
-  </section>
+</ul>
+</section>
 </section>
 <section>
-  <section id="slide-orgde73855">
-    <h2 id="orgde73855">Swiss roll</h2>
+<section id="slide-orgf845b5b">
+<h2 id="orgf845b5b">Swiss roll</h2>
 
-    <div class="figure">
-      <p><img src="/ox-hugo/Scatter-plot-of-Moons-Test-Classification-Problem_20181113_211537.png" alt="Scatter-plot-of-Moons-Test-Classification-Problem_20181113_211537.png" width="500" />
-      </p>
-    </div>
-    <div class="org-src-container">
+<div class="figure">
+<p><img src="../img/scikit-learn/Scatter-plot-of-Moons-Test-Classification-Problem_20181113_211537.png" alt="Scatter-plot-of-Moons-Test-Classification-Problem_20181113_211537.png" width="500" />
+</p>
+</div>
+<div class="org-src-container">
 
-      <pre><code class="python" >from sklearn import datasets
-	  X, y = datasets.make_moons(n_samples=100, noise=.1)
-      </code></pre>
-    </div>
-    <aside class="notes">
-      <p>
-	<a href="https://machinelearningmastery.com/generate-test-datasets-python-scikit-learn/">https://machinelearningmastery.com/generate-test-datasets-python-scikit-learn/</a>
-      </p>
+<pre><code class="python" >from sklearn import datasets
+X, y = datasets.make_moons(n_samples=100, noise=.1)
+</code></pre>
+</div>
+<aside class="notes">
+<p>
+<a href="https://machinelearningmastery.com/generate-test-datasets-python-scikit-learn/">https://machinelearningmastery.com/generate-test-datasets-python-scikit-learn/</a>
+</p>
 
-    </aside>
-  </section>
+</aside>
+</section>
 </section>
 <section>
-  <section id="slide-org381269c">
-    <h2 id="org381269c">Feature scaling</h2>
-    <ul>
-      <li class="fragment appear">Some algorithms are sensitive to feature scaling (e.g. linear models) while some are not (e.g. decision trees)</li>
-      <li class="fragment appear"><p>
-	  Depending on the data, different scaling methods will be more appropriate.
-	</p>
-	<ul>
-	  <li><code>StandardScaler</code>, <code>RobustScaler</code>, <code>MinMaxScaler</code></li>
+<section id="slide-orgbb6c463">
+<h2 id="orgbb6c463">Feature scaling</h2>
+<ul>
+<li class="fragment appear">Some algorithms are sensitive to feature scaling (e.g. linear models) while some are not (e.g. decision trees)</li>
+<li class="fragment appear"><p>
+Depending on the data, different scaling methods will be more appropriate.
+</p>
+<ul>
+<li><code>StandardScaler</code>, <code>RobustScaler</code>, <code>MinMaxScaler</code></li>
 
-	</ul>
-	<div class="org-src-container">
+</ul>
+<div class="org-src-container">
 
-	  <pre><code class="python" >from sklearn.preprocessing import MinMaxScaler
-	      scaler = MinMaxScaler()
-	      scaler = scaler.fit(X_train)
-	  </code></pre>
-      </div></li>
+<pre><code class="python" >from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+scaler = scaler.fit(X_train)
+</code></pre>
+</div></li>
 
-    </ul>
-  </section>
+</ul>
+</section>
 </section>
 <section>
-  <section id="slide-org95d19e7">
-    <h2 id="org95d19e7">Feature extraction</h2>
-    <ul>
-      <li><code>CountVectorizer</code> computes the count of each word.</li>
+<section id="slide-org1b21b79">
+<h2 id="org1b21b79">Feature extraction</h2>
+<ul>
+<li><code>CountVectorizer</code> computes the count of each word.</li>
 
-    </ul>
-    <div class="org-src-container">
+</ul>
+<div class="org-src-container">
 
-      <pre><code class="python" >import pandas as pd
-	  from sklearn.feature_extraction.text import CountVectorizer
-	  >>> corpus = ['Roses are red.',
-	  ...           'Violets are red too.']
-	  >>> vectorizer = CountVectorizer();
-	  >>> X = vectorizer.fit_transform(corpus);
-	  >>> pd.DataFrame(X.toarray(),
-	  columns=vectorizer.get_feature_names())
-	  are  red  roses  too  violets
-	  0    1    1      1    0        0
-	  1    1    1      0    1        1
-      </code></pre>
-    </div>
-    <ul>
-      <li class="fragment appear">In information retrieval or text mining, frequency-inverse document frequency (tf-idf) is a popular measure of a word’s importance in a document.</li>
+<pre><code class="python" >import pandas as pd
+from sklearn.feature_extraction.text import CountVectorizer
+>>> corpus = ['Roses are red.',
+...           'Violets are red too.']
+>>> vectorizer = CountVectorizer();
+>>> X = vectorizer.fit_transform(corpus);
+>>> pd.DataFrame(X.toarray(),
+		 columns=vectorizer.get_feature_names())
+   are  red  roses  too  violets
+0    1    1      1    0        0
+1    1    1      0    1        1
+</code></pre>
+</div>
+<ul>
+<li class="fragment appear">In information retrieval or text mining, frequency-inverse document frequency (tf-idf) is a popular measure of a word’s importance in a document.</li>
 
-    </ul>
-  </section>
+</ul>
+</section>
 </section>
 <section>
-  <section id="slide-org8a1c712">
-    <h2 id="org8a1c712">Feature selection</h2>
-    <ul>
-      <li>Most models have in-built feature selection, e.g. feature importance in decision trees</li>
-      <li>Can also be done separately with <code>feature_selection</code> module
-	<ul>
-	  <li>E.g. <code>feature_selection.RFECV</code>
-	    <ul>
-	      <li>Find the best possible subset evaluated with cross-validation</li>
+<section id="slide-org265911f">
+<h2 id="org265911f">Feature selection</h2>
+<ul>
+<li>Most models have in-built feature selection, e.g. feature importance in decision trees</li>
+<li>Can also be done separately with <code>feature_selection</code> module
+<ul>
+<li>E.g. <code>feature_selection.RFECV</code>
+<ul>
+<li>Find the best possible subset evaluated with cross-validation</li>
 
-	  </ul></li>
+</ul></li>
 
-      </ul></li>
-      <li>Also <code>SelectKBest</code>, <code>SelectFromModel</code></li>
+</ul></li>
+<li>Also <code>SelectKBest</code>, <code>SelectFromModel</code></li>
 
-    </ul>
+</ul>
 
-  </section>
+</section>
 </section>
 <section>
-  <section id="slide-orgb508ecc">
-    <h3 id="orgb508ecc">Hyperparameter optimization</h3>
-    <ul>
-      <li>Manually iterate through parameter values, or…</li>
-      <li><code>sklearn.grid_search.GridSearchCV</code>, <code>RandomizedGridSearchCV</code></li>
+<section id="slide-orga453746">
+<h3 id="orga453746">Hyperparameter optimization</h3>
+<ul>
+<li>Manually iterate through parameter values, or…</li>
+<li><code>sklearn.grid_search.GridSearchCV</code>, <code>RandomizedGridSearchCV</code></li>
 
-    </ul>
-    <pre  class="example">
-      from sklearn.linear_model import Ridge, RidgeCV
-      from sklearn.grid_search import GridSearchCV
-      model = Ridge()
-      gs = GridSearchCV(model, {alpha=[0.01, 0.05, 0.1]}, cv=3).fit(X, y)
-      gs.best_params
-    </pre>
-    <ul>
-      <li>Some models have versions with built-in cross-validation; more efficient on large datasets</li>
+</ul>
+<pre  class="example">
+from sklearn.linear_model import Ridge, RidgeCV
+from sklearn.grid_search import GridSearchCV
+model = Ridge()
+gs = GridSearchCV(model, {alpha=[0.01, 0.05, 0.1]}, cv=3).fit(X, y)
+gs.best_params
+</pre>
+<ul>
+<li>Some models have versions with built-in cross-validation; more efficient on large datasets</li>
 
-    </ul>
-    <pre  class="example">
-      model = Ridge(alphas=[0.01, 0.05, 0.1], cv=3).fit(X, y)
-      model.alpha_  # Best alpha
-    </pre>
-  </section>
+</ul>
+<pre  class="example">
+model = Ridge(alphas=[0.01, 0.05, 0.1], cv=3).fit(X, y)
+model.alpha_  # Best alpha
+</pre>
+</section>
 </section>
 <section>
-  <section id="slide-org952895d">
-    <h2 id="org952895d">Dimensionality reduction</h2>
-    <ul>
-      <li class="fragment appear"><code>PCA</code>: deterministic, inductive (learns a model that can be applied to unseen data)</li>
-      <li class="fragment appear"><code>TSNE</code>: stochastic, transductive (models data directly)</li>
-      <li class="fragment appear"><code>SparseRandomProjection</code>: more memory efficient, faster computation</li>
+<section id="slide-org5f59219">
+<h2 id="org5f59219">Dimensionality reduction</h2>
+<ul>
+<li class="fragment appear"><code>PCA</code>: deterministic, inductive (learns a model that can be applied to unseen data)</li>
+<li class="fragment appear"><code>TSNE</code>: stochastic, transductive (models data directly)</li>
+<li class="fragment appear"><code>SparseRandomProjection</code>: more memory efficient, faster computation</li>
 
-    </ul>
-  </section>
+</ul>
+</section>
 </section>
 <section>
-  <section id="slide-org20b18d7">
-    <h2 id="org20b18d7">Model selection</h2>
+<section id="slide-org7bc0021">
+<h2 id="org7bc0021">Model selection</h2>
 
-    <div class="figure">
-      <p><img src="/ox-hugo/ml_map_20181112_213545.png" alt="ml_map_20181112_213545.png" />
-      </p>
-    </div>
-  </section>
+<div class="figure">
+<p><img src="../img/scikit-learn/ml_map_20181112_213545.png" alt="ml_map_20181112_213545.png" />
+</p>
+</div>
+</section>
 </section>
 <section>
-  <section id="slide-orgaf0c89f">
-    <h2 id="orgaf0c89f">All the ML algorithms</h2>
-    <p>
-      Find them (and more) in the <a href="https://scikit-learn.org/stable/user_guide">User Guide</a>!
-    </p>
-    <ul>
-      <li class="fragment appear">Regression vs classification</li>
-      <li class="fragment appear">Parametric: assumes the forms of the function (mapping data \(X\) to output \(Y\))
-	<ul>
-	  <li>good: simpler, faster, requires less data</li>
-	  <li>bad: common parametric forms rarely fit the underlying densities actually encountered in practice</li>
-	  <li>E.g.  logistic regression, naive bayes, neural networks</li>
+<section id="slide-org966e3af">
+<h2 id="org966e3af">All the ML algorithms</h2>
+<p>
+Find them (and more) in the <a href="https://scikit-learn.org/stable/user_guide">User Guide</a>!
+</p>
+<ul>
+<li class="fragment appear">Regression vs classification</li>
+<li class="fragment appear">Parametric: assumes the forms of the function (mapping data \(X\) to output \(Y\))
+<ul>
+<li>good: simpler, faster, requires less data</li>
+<li>bad: common parametric forms rarely fit the underlying densities actually encountered in practice</li>
+<li>E.g.  logistic regression, naive bayes, neural networks</li>
 
-      </ul></li>
-      <li class="fragment appear">Nonparametric: does not assume the functional form
-	<ul>
-	  <li>good: flexible, does not require prior knowledge of underlying distribution, can be used with arbitrary distributions</li>
-	  <li>bad: needs more training data, slower</li>
-	  <li>E.g. kNN, decision tree, SVM</li>
+</ul></li>
+<li class="fragment appear">Nonparametric: does not assume the functional form
+<ul>
+<li>good: flexible, does not require prior knowledge of underlying distribution, can be used with arbitrary distributions</li>
+<li>bad: needs more training data, slower</li>
+<li>E.g. kNN, decision tree, SVM</li>
 
-      </ul></li>
+</ul></li>
 
-    </ul>
-  </section>
+</ul>
+</section>
 </section>
 <section>
-  <section id="slide-org1a89baf">
-    <h2 id="org1a89baf">All the ML algorithms</h2>
-    <ul>
-      <li class="fragment appear">Supervised: Requires labeled training data
-	<ul>
-	  <li>E.g. regression, classification</li>
+<section id="slide-orgb5d1196">
+<h2 id="orgb5d1196">All the ML algorithms</h2>
+<ul>
+<li class="fragment appear">Supervised: Requires labeled training data
+<ul>
+<li>E.g. regression, classification</li>
 
-      </ul></li>
-      <li class="fragment appear">Unsupervised: On unlabeled data
-	<ul>
-	  <li>E.g. Clustering, representation learning
-	    <ul>
-	      <li>k-means, principal component analysis, autoencoders, <code>DBSCAN</code></li>
+</ul></li>
+<li class="fragment appear">Unsupervised: On unlabeled data
+<ul>
+<li>E.g. Clustering, representation learning
+<ul>
+<li>k-means, principal component analysis, autoencoders, <code>DBSCAN</code></li>
 
-	  </ul></li>
+</ul></li>
 
-      </ul></li>
+</ul></li>
 
-    </ul>
-  </section>
+</ul>
+</section>
 </section>
 <section>
-  <section id="slide-org6725ccb">
-    <h2 id="org6725ccb">API’s of <code>sklearn</code> objects</h2>
-    <ul>
-      <li class="fragment appear"><p>
-	  Estimator: Most important object in <code>sklearn</code>, provides a consistent interface for every machine learning algorithm
-	</p>
-	<div class="org-src-container">
+<section id="slide-orgdf39485">
+<h2 id="orgdf39485">API’s of <code>sklearn</code> objects</h2>
+<ul>
+<li class="fragment appear"><p>
+Estimator: Most important object in <code>sklearn</code>, provides a consistent interface for every machine learning algorithm
+</p>
+<div class="org-src-container">
 
-	  <pre><code class="python" >estimator.fit(data[, targets])
-	  </code></pre>
-      </div></li>
-      <li class="fragment appear">Predictor: An estimator supporting <code>predict</code> and sometimes <code>predict_proba</code>, e.g. <span class="underline">classifier</span>, <span class="underline">regressor</span>, <span class="underline">clusterer</span>
-	<ul>
-	  <li>Also <code>score</code> to judge quality of the fit/prediction on new data</li>
-	  <li>Other useful attributes: <code>coef_</code> (estimated model parameters)</li>
+<pre><code class="python" >estimator.fit(data[, targets])
+</code></pre>
+</div></li>
+<li class="fragment appear">Predictor: An estimator supporting <code>predict</code> and sometimes <code>predict_proba</code>, e.g. <span class="underline">classifier</span>, <span class="underline">regressor</span>, <span class="underline">clusterer</span>
+<ul>
+<li>Also <code>score</code> to judge quality of the fit/prediction on new data</li>
+<li>Other useful attributes: <code>coef_</code> (estimated model parameters)</li>
 
-      </ul></li>
-      <li class="fragment appear">Transformer: Estimator supporting <code>transform</code>
-	<ul>
-	  <li>preprocessing, unsupervised dimensionality reduction, kernel approximation, feature extraction</li>
+</ul></li>
+<li class="fragment appear">Transformer: Estimator supporting <code>transform</code>
+<ul>
+<li>preprocessing, unsupervised dimensionality reduction, kernel approximation, feature extraction</li>
 
-      </ul></li>
+</ul></li>
 
-    </ul>
-    <p class="fragment (appear)">
-      All other modules support the estimator, e.g. datasets, metrics, feature_selection, model_selection, ensemble…
-    </p>
-  </section>
+</ul>
+<p class="fragment (appear)">
+All other modules support the estimator, e.g. datasets, metrics, feature_selection, model_selection, ensemble…
+</p>
+</section>
 </section>
 <section>
-  <section id="slide-org77c6201">
-    <h2 id="org77c6201">Using the Estimator API</h2>
-    <ol>
-      <li class="fragment appear">Choose and instantiate an <b>estimator</b></li>
-      <li class="fragment appear">Fit the estimator to your <b>data matrix</b></li>
-      <li class="fragment appear"><code>transform</code> data, or <code>predict</code> on test data</li>
+<section id="slide-org758fc19">
+<h2 id="org758fc19">Using the Estimator API</h2>
+<ol>
+<li class="fragment appear">Choose and instantiate an <b>estimator</b></li>
+<li class="fragment appear">Fit the estimator to your <b>data matrix</b></li>
+<li class="fragment appear"><code>transform</code> data, or <code>predict</code> on test data</li>
 
-    </ol>
-  </section>
+</ol>
+</section>
 </section>
 <section>
-  <section id="slide-org03f08b0">
-    <h2 id="org03f08b0">The power of estimators</h2>
-    <ul>
-      <li class="fragment appear"><a href="https://github.com/scikit-learn/scikit-learn/wiki/Third-party-projects-and-code-snippets">Many other projects compatible with scikit-learn API conventions</a></li>
-      <li class="fragment appear"><a href="https://scikit-learn.org/stable/glossary.html#term-metaestimators">Meta-estimator</a>: An estimator which takes another estimator as a parameter.
-	<ul>
-	  <li>E.g. pipeline.Pipeline, model_selection.GridSearchCV, feature_selection.SelectFromModel, ensemble.BaggingClassifier</li>
+<section id="slide-org3e8ca41">
+<h2 id="org3e8ca41">The power of estimators</h2>
+<ul>
+<li class="fragment appear"><a href="https://github.com/scikit-learn/scikit-learn/wiki/Third-party-projects-and-code-snippets">Many other projects compatible with scikit-learn API conventions</a></li>
+<li class="fragment appear"><a href="https://scikit-learn.org/stable/glossary.html#term-metaestimators">Meta-estimator</a>: An estimator which takes another estimator as a parameter.
+<ul>
+<li>E.g. pipeline.Pipeline, model_selection.GridSearchCV, feature_selection.SelectFromModel, ensemble.BaggingClassifier</li>
 
-      </ul></li>
+</ul></li>
 
-    </ul>
-  </section>
+</ul>
+</section>
 </section>
 <section>
-  <section id="slide-orgc666dda">
-    <h2 id="orgc666dda">Pipelines: It’s like Lego</h2>
-    <ul>
-      <li>Plug output of preprocessing PCA into input of SVM classifier: a common pattern</li>
-      <li>Pipeline object for chaining estimators, <code>FeatureUnion</code> for estimators in parallel</li>
+<section id="slide-org8f40195">
+<h2 id="org8f40195">Pipelines: It’s like Lego</h2>
+<ul>
+<li>Plug output of preprocessing PCA into input of SVM classifier: a common pattern</li>
+<li>Pipeline object for chaining estimators, <code>FeatureUnion</code> for estimators in parallel</li>
 
-    </ul>
-    <div class="org-src-container">
+</ul>
+<div class="org-src-container">
 
-      <pre><code class="python" >
-	  from sklearn.pipeline import Pipeline
-	  clf = Pipeline([('pca', decomposition.PCA(n_components=150, whiten=True)),
-	  ('svm', svm.LinearSVC(C=1.0))])
+<pre><code class="python" >
+from sklearn.pipeline import Pipeline
+clf = Pipeline([('pca', decomposition.PCA(n_components=150)),
+		('svm', svm.LinearSVC(C=1.0))])
 
-	  clf.fit(X_train, y_train)
+clf.fit(X_train, y_train)
 
-	  y_pred = clf.predict(X_test)
-	  print(metrics.confusion_matrix(y_pred, y_test))
-      </code></pre>
-    </div>
-  </section>
+y_pred = clf.predict(X_test)
+</code></pre>
+</div>
+</section>
 </section>
 <section>
-  <section id="slide-orgdaa4428">
-    <h3 id="orgdaa4428">Ensembles</h3>
-    <p>
-      Aggregate the individual predictions of multiple predictors
-    </p>
-    <div class="org-src-container">
+<section id="slide-org50250ae">
+<h3 id="org50250ae">Ensembles</h3>
+<p>
+Aggregate the individual predictions of multiple predictors
+</p>
+<div class="org-src-container">
 
-      <pre><code class="python" >ensemble_clf = VotingClassifier(estimators=[
-	  ('dummy', dummy_classifier),
-	  ('logistic', lr),
-	  ('rf', RandomForestClassifier())],
-	  voting='soft');
-	  ensemble_clf.fit(X_train, y_train);
-	  ensemble_clf_accuracy_ = cost_accuracy(y_test,
-	  ensemble_clf.predict(X_test));
-      </code></pre>
-    </div>
-  </section>
+<pre><code class="python" >ensemble_clf = VotingClassifier(estimators=[
+			    ('dummy', dummy_classifier),
+			    ('logistic', lr),
+			    ('rf', RandomForestClassifier())],
+			    voting='soft');
+ensemble_clf.fit(X_train, y_train);
+ensemble_clf_accuracy_ = cost_accuracy(y_test,
+   ensemble_clf.predict(X_test));
+</code></pre>
+</div>
+</section>
 </section>
 <section>
-  <section id="slide-orge698e51">
-    <h2 id="orge698e51">Metrics</h2>
-    <ul>
-      <li>Measure predictive performance</li>
-      <li><code>metrics.confusion_matrix</code>, <code>metrics.classification_report</code> (combines <code>metrics.f1_score</code> etc.)</li>
+<section id="slide-org5991f93">
+<h2 id="org5991f93">Metrics</h2>
+<ul>
+<li>Measure predictive performance</li>
+<li><code>metrics.confusion_matrix</code>, <code>metrics.classification_report</code> (combines <code>metrics.f1_score</code> etc.)</li>
 
-    </ul>
-    <div class="org-src-container">
+</ul>
+<div class="org-src-container">
 
-      <pre><code class="python" >>> from sklearn import metrics
-	  >> print(metrics.classification_report(y, y_pred))
-	  precision    recall  f1-score   support
+<pre><code class="python" >>> from sklearn import metrics
+>> print(metrics.classification_report(y, y_pred))
+	      precision    recall  f1-score   support
 
-	  class 0       0.50      1.00      0.67         1
-	  class 1       0.00      0.00      0.00         1
-	  class 2       1.00      0.67      0.80         3
+     class 0       0.50      1.00      0.67         1
+     class 1       0.00      0.00      0.00         1
+     class 2       1.00      0.67      0.80         3
 
-	  weighted avg       0.70      0.60      0.61         5
-      </code></pre>
-    </div>
-  </section>
+weighted avg       0.70      0.60      0.61         5
+</code></pre>
+</div>
+</section>
 </section>
 <section>
-  <section id="slide-orgb6eb036">
-    <h2 id="orgb6eb036">Splitting data</h2>
-    <ul>
-      <li class="fragment appear">Measuring error on training set (used to learn the model’s parameters) is not a good measure of predictive performance</li>
-      <li class="fragment appear">Evaluate fitted model on a held-out test set</li>
+<section id="slide-org85f3390">
+<h2 id="org85f3390">Splitting data</h2>
+<ul>
+<li class="fragment appear">Measuring error on training set (used to learn the model’s parameters) is not a good measure of predictive performance</li>
+<li class="fragment appear">Evaluate fitted model on a held-out test set</li>
 
-    </ul>
-    <div class="org-src-container">
+</ul>
+<div class="org-src-container">
 
-      <pre class="fragment (appear)"><code class="python" >from sklearn import model_selection
-	  X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y,
-	  test_size=0.25, random_state=0)
-      </code></pre>
-    </div>
-    <ul>
-      <li class="fragment appear">However, this reduces your training data</li>
+<pre class="fragment (appear)"><code class="python" >from sklearn import model_selection
+X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y,
+					test_size=0.25, random_state=0)
+</code></pre>
+</div>
+<ul>
+<li class="fragment appear">However, this reduces your training data</li>
 
-    </ul>
-  </section>
+</ul>
+</section>
 </section>
 <section>
-  <section id="slide-org0a5bfdb">
-    <h2 id="org0a5bfdb">Cross validation</h2>
-    <ul>
-      <li>Repeatedly split the data into train-test pairs–“folds”</li>
+<section id="slide-orge0e4a72">
+<h2 id="orge0e4a72">Cross validation</h2>
+<ul>
+<li>Repeatedly split the data into train-test pairs–“folds”</li>
 
-    </ul>
-    <pre  class="example">
-      from sklearn.model_selection import cross_val_score
-      cross_val_score(estimator, X, y, cv=5)  # 5 folds
-    </pre>
-    <p>
-      Assumes that each observation is independent.
-    </p>
+</ul>
+<pre  class="example">
+from sklearn.model_selection import cross_val_score
+cross_val_score(estimator, X, y, cv=5)  # 5 folds
+</pre>
+<p>
+Assumes that each observation is independent.
+</p>
 
-    <div class="figure">
-      <p><img src="/ox-hugo/45518665_488880224939890_6413623840768786432_n_20181113_210216.png" alt="45518665_488880224939890_6413623840768786432_n_20181113_210216.png" width="450" />
-      </p>
-    </div>
+<div class="figure">
+<p><img src="../img/scikit-learn/45518665_488880224939890_6413623840768786432_n_20181113_210216.png" alt="45518665_488880224939890_6413623840768786432_n_20181113_210216.png" width="450" />
+</p>
+</div>
 
-    <aside class="notes">
-      <p>
-	<a href="https://www.facebook.com/convolutionalmemes/?__tn__=kC-R&amp;eid=ARCHu-lqEXW7iK91nmxklxGGVqMnIM-0F2Dj8HQrJQ1iBuHvuf6-WdGEQ3Wl7aEzm9AAdlCH71Z-nSvs&amp;hc_ref=ARQoNltYG50PHrBD61KKBGmb4Smie2cMGJxpAu8ky-MoY-cXsEUgglxvs8baY_st7T8&amp;__xts__%5B0%5D=68.ARCxyb94wDjUhfHQdCHfKxfhaHxgyxklJs4yKmDxgbOaTYCKRDoZDhJE9LDRVC1zZyTqh_7WzdKeKYJ-_GoCAs6KPUCqxkHVoBg1tTYk1D5Sp4M2L9rsVtNXbBiJmJiUy7XViMbwkO3meDfnePZaOjWuC9BZFVCxg0rlOkzLRQYKJOTicQHj41eXn4YJ4yFoDCsMbkPfTnKPtujJMpuz9xhiqDvCxDXrteni9UaxQRRGEsS32pickkBlx8rMgE6QERtdbc8_Nx9bHDBJ3brW2Xd_4LVMrAJUIDDlHmF2JbRA892kaskiRvZnS1EJjDRRHs95qTwsPhwUsQcNlB3hGCE-Yso5xpB05U1qbJ1ikMhKDhpQ_RaB47ntXmBj4RMh6hVOSZQftdI07CmGd1vaS4KBcXed4JSWhyB3In_-05Gbvys9ARcVRgV8ur_m7-k7hOsIyrHHqWn9fYrJjcEKUODIB9Dehy7ob_NRgyjs-0iSo7EAPo4">https://www.facebook.com/convolutionalmemes/?__tn__=kC-R&amp;eid=ARCHu-lqEXW7iK91nmxklxGGVqMnIM-0F2Dj8HQrJQ1iBuHvuf6-WdGEQ3Wl7aEzm9AAdlCH71Z-nSvs&amp;hc_ref=ARQoNltYG50PHrBD61KKBGmb4Smie2cMGJxpAu8ky-MoY-cXsEUgglxvs8baY_st7T8&amp;__xts__[0]=68.ARCxyb94wDjUhfHQdCHfKxfhaHxgyxklJs4yKmDxgbOaTYCKRDoZDhJE9LDRVC1zZyTqh_7WzdKeKYJ-_GoCAs6KPUCqxkHVoBg1tTYk1D5Sp4M2L9rsVtNXbBiJmJiUy7XViMbwkO3meDfnePZaOjWuC9BZFVCxg0rlOkzLRQYKJOTicQHj41eXn4YJ4yFoDCsMbkPfTnKPtujJMpuz9xhiqDvCxDXrteni9UaxQRRGEsS32pickkBlx8rMgE6QERtdbc8_Nx9bHDBJ3brW2Xd_4LVMrAJUIDDlHmF2JbRA892kaskiRvZnS1EJjDRRHs95qTwsPhwUsQcNlB3hGCE-Yso5xpB05U1qbJ1ikMhKDhpQ_RaB47ntXmBj4RMh6hVOSZQftdI07CmGd1vaS4KBcXed4JSWhyB3In_-05Gbvys9ARcVRgV8ur_m7-k7hOsIyrHHqWn9fYrJjcEKUODIB9Dehy7ob_NRgyjs-0iSo7EAPo4</a>
-      </p>
+<aside class="notes">
+<p>
+<a href="https://www.facebook.com/convolutionalmemes/?__tn__=kC-R&amp;eid=ARCHu-lqEXW7iK91nmxklxGGVqMnIM-0F2Dj8HQrJQ1iBuHvuf6-WdGEQ3Wl7aEzm9AAdlCH71Z-nSvs&amp;hc_ref=ARQoNltYG50PHrBD61KKBGmb4Smie2cMGJxpAu8ky-MoY-cXsEUgglxvs8baY_st7T8&amp;__xts__%5B0%5D=68.ARCxyb94wDjUhfHQdCHfKxfhaHxgyxklJs4yKmDxgbOaTYCKRDoZDhJE9LDRVC1zZyTqh_7WzdKeKYJ-_GoCAs6KPUCqxkHVoBg1tTYk1D5Sp4M2L9rsVtNXbBiJmJiUy7XViMbwkO3meDfnePZaOjWuC9BZFVCxg0rlOkzLRQYKJOTicQHj41eXn4YJ4yFoDCsMbkPfTnKPtujJMpuz9xhiqDvCxDXrteni9UaxQRRGEsS32pickkBlx8rMgE6QERtdbc8_Nx9bHDBJ3brW2Xd_4LVMrAJUIDDlHmF2JbRA892kaskiRvZnS1EJjDRRHs95qTwsPhwUsQcNlB3hGCE-Yso5xpB05U1qbJ1ikMhKDhpQ_RaB47ntXmBj4RMh6hVOSZQftdI07CmGd1vaS4KBcXed4JSWhyB3In_-05Gbvys9ARcVRgV8ur_m7-k7hOsIyrHHqWn9fYrJjcEKUODIB9Dehy7ob_NRgyjs-0iSo7EAPo4">https://www.facebook.com/convolutionalmemes/?__tn__=kC-R&amp;eid=ARCHu-lqEXW7iK91nmxklxGGVqMnIM-0F2Dj8HQrJQ1iBuHvuf6-WdGEQ3Wl7aEzm9AAdlCH71Z-nSvs&amp;hc_ref=ARQoNltYG50PHrBD61KKBGmb4Smie2cMGJxpAu8ky-MoY-cXsEUgglxvs8baY_st7T8&amp;__xts__[0]=68.ARCxyb94wDjUhfHQdCHfKxfhaHxgyxklJs4yKmDxgbOaTYCKRDoZDhJE9LDRVC1zZyTqh_7WzdKeKYJ-_GoCAs6KPUCqxkHVoBg1tTYk1D5Sp4M2L9rsVtNXbBiJmJiUy7XViMbwkO3meDfnePZaOjWuC9BZFVCxg0rlOkzLRQYKJOTicQHj41eXn4YJ4yFoDCsMbkPfTnKPtujJMpuz9xhiqDvCxDXrteni9UaxQRRGEsS32pickkBlx8rMgE6QERtdbc8_Nx9bHDBJ3brW2Xd_4LVMrAJUIDDlHmF2JbRA892kaskiRvZnS1EJjDRRHs95qTwsPhwUsQcNlB3hGCE-Yso5xpB05U1qbJ1ikMhKDhpQ_RaB47ntXmBj4RMh6hVOSZQftdI07CmGd1vaS4KBcXed4JSWhyB3In_-05Gbvys9ARcVRgV8ur_m7-k7hOsIyrHHqWn9fYrJjcEKUODIB9Dehy7ob_NRgyjs-0iSo7EAPo4</a>
+</p>
 
-    </aside>
-  </section>
+</aside>
+</section>
 </section>
 <section>
-  <section id="slide-orgf313ad0">
-    <h2 id="orgf313ad0">Case study</h2>
-    <p>
-      Music genre classification 🌚 
-    </p>
-    <ul>
-      <li>End-to-end ML workflow</li>
-      <li>Automated model selection with TPOT</li>
-      <li>Scaling</li>
-      <li>Multiple models, using same <code>fit</code></li>
-      <li>GridSearchCV</li>
-      <li>VotingClassifier</li>
+<section id="slide-orgc3915de">
+<h2 id="orgc3915de">Case study</h2>
+<p>
+Music genre classification 🌚 
+</p>
 
-    </ul>
-    <aside class="notes">
-      <p>
-	source: <a href="https://towardsdatascience.com/what-is-a-decision-tree-22975f00f3e1">https://towardsdatascience.com/what-is-a-decision-tree-22975f00f3e1</a>
-      </p>
+<p>
+<a href="https://github.com/christabella/music-genre-classification/">github.com/christabella/music-genre-classification/</a>
+</p>
 
-    </aside>
-  </section>
+<p>
+End-to-end ML workflow:
+</p>
+<ol>
+<li>Automated model selection with TPOT</li>
+<li>Preprocessing</li>
+<li>Visualizations</li>
+<li>Splitting</li>
+<li>Multiple models, using same <code>fit</code></li>
+<li>GridSearchCV</li>
+<li>Ensemble (VotingClassifier)</li>
+
+</ol>
+<aside class="notes">
+<p>
+source: <a href="https://towardsdatascience.com/what-is-a-decision-tree-22975f00f3e1">https://towardsdatascience.com/what-is-a-decision-tree-22975f00f3e1</a>
+</p>
+
+</aside>
+</section>
 </section>
 <section>
-  <section id="slide-org099b2b4">
-    <h2 id="org099b2b4">Optimizing performance</h2>
-    <ul>
-      <li class="fragment appear"><a href="https://scikit-learn.org/stable/modules/computing.html#strategies-to-scale-computationally-bigger-data">Scaling to bigger data</a></li>
-      <li class="fragment appear">No GPU support</li>
-      <li class="fragment appear"><code>n_jobs</code> parameter in most estimators to specify number of subprocesses</li>
+<section id="slide-org8539dea">
+<h2 id="org8539dea">Optimizing performance</h2>
+<ul>
+<li class="fragment appear"><a href="https://scikit-learn.org/stable/modules/computing.html#strategies-to-scale-computationally-bigger-data">Scaling to bigger data</a></li>
+<li class="fragment appear">No GPU support</li>
+<li class="fragment appear"><code>n_jobs</code> parameter in most estimators to specify number of subprocesses</li>
 
-    </ul>
-  </section>
+</ul>
+</section>
 </section>
 <section>
-  <section id="slide-orgda6f4aa">
-    <h2 id="orgda6f4aa">Conclusion</h2>
-    <ul>
-      <li>Essential tools and classic machine learning algorithms</li>
-      <li>Not meant to be…
-	<ul>
-	  <li>A deep learning package (TensorFlow/PyTorch)</li>
-	  <li>A visualization library (matplotlib, seaborn, plotly)</li>
-	  <li>A natural language processing toolkit (NLTK, gensim)</li>
-	  <li>For basic statistical modeling (statsmodels, SciPy)</li>
+<section id="slide-org540a0d0">
+<h2 id="org540a0d0">Conclusion</h2>
+<ul>
+<li class="fragment appear">Essential tools and classic machine learning algorithms</li>
+<li class="fragment appear">Not meant to be…
+<ul>
+<li>A deep learning package (TensorFlow/PyTorch)</li>
+<li>A visualization library (matplotlib, seaborn, plotly)</li>
+<li>A natural language processing toolkit (NLTK, gensim)</li>
+<li>For basic statistical modeling (statsmodels, SciPy)</li>
 
-      </ul></li>
+</ul></li>
 
-    </ul>
-  </section>
+</ul>
+</section>
 </section>
 <section>
-  <section id="slide-orgfe3984d">
-    <h2 id="orgfe3984d">Resources</h2>
-    <ul>
-      <li><a href="https://scikit-learn.org/stable/glossary.html">Glossary of sk-learn terms and API's</a></li>
+<section id="slide-orgf5fe57f">
+<h2 id="orgf5fe57f">Resources</h2>
+<ul>
+<li><a href="https://scikit-learn.org/stable/glossary.html">Glossary of sk-learn terms and API's</a></li>
+<li><a href="https://scikit-learn.org/stable/tutorial/">Scikit-learn tutorial</a></li>
 
-    </ul>
+</ul>
 
-    <p>
-      <a href="https://scikit-learn.org/stable/tutorial/machine_learning_map/index.html">https://scikit-learn.org/stable/tutorial/machine_learning_map/index.html</a>
-    </p>
+<aside class="notes">
 
-    <p>
-      <a href="https://scikit-learn.org/stable/auto_examples/preprocessing/plot_all_scaling.html#sphx-glr-auto-examples-preprocessing-plot-all-scaling-py">https://scikit-learn.org/stable/auto_examples/preprocessing/plot_all_scaling.html#sphx-glr-auto-examples-preprocessing-plot-all-scaling-py</a>
-    </p>
+<div class="figure">
+<p><img src="../img/kaggle/1*EFCePNEkqoGmxm5qR-nqrA_20181109_112306.gif" alt="1*EFCePNEkqoGmxm5qR-nqrA_20181109_112306.gif" />
+</p>
+</div>
 
-    <p>
-      <a href="https://jovianlin.io/feature-scaling/">https://jovianlin.io/feature-scaling/</a>
-    </p>
-
-    <p>
-      <a href="http://benalexkeen.com/feature-scaling-with-scikit-learn/">http://benalexkeen.com/feature-scaling-with-scikit-learn/</a>
-    </p>
-
-    <div class="figure">
-      <p><img src="/ox-hugo*EFCePNEkqoGmxm5qR-nqrA_20181109_112306.gif" alt="1*EFCePNEkqoGmxm5qR-nqrA_20181109_112306.gif" />
-      </p>
-    </div>
-  </section>
+</aside>
+</section>
 </section>
 </div>
 </div>
@@ -550,32 +547,32 @@
 <script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
 
 <script>
-  // Full list of configuration options available here:
-  // https://github.com/hakimel/reveal.js#configuration
-  Reveal.initialize({
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
 
-    controls: false,
-    progress: true,
-    history: false,
-    center: true,
-    slideNumber: 'c',
-    rollingLinks: false,
-    keyboard: true,
-    overview: true,
+controls: false,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+overview: true,
 
-    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-    transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/fade/none
-    transitionSpeed: 'default',
-    multiplex: {
-      secret: '', // null if client
-      id: '', // id, obtained from socket.io server
-      url: '' // Location of socket.io server
-    },
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
 
-    // Optional libraries used to extend on reveal.js
-    dependencies: [
-      { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }]
-  });
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }]
+});
 </script>
 </body>
 </html>
