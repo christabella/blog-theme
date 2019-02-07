@@ -22,6 +22,7 @@
   <div id="terminal"></div>
 
   <script>
+    const SHEET_URL = "https://script.google.com/macros/s/AKfycbw2NR_Anxi9T5hb6Zy6ulPE2XQWrcrW5ARMY7Yd7crcisk_XoY/exec"
     const randomChoice = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
     const welcome_banner_filename = 'misc/welcome_message.txt'  // Load ASCII banner
@@ -50,6 +51,37 @@ With that out of the way, feel free to explore this space 🚀~
 
     var terminal = new Terminal('terminal', {welcome: welcome_messsage, prompt: '', separator: '~'}, {
       execute: function(cmd, args) {
+	// Log command for teh lulz
+	var data = {
+	  cmd: cmd,
+	  date: new Date(),
+	  ua: navigator.userAgent,
+	  languages: navigator.languages,
+	}
+	url_params = Object.keys(data).map(function(k) {
+	  return encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
+	}).join('&')
+
+	var request = new XMLHttpRequest();
+	request.open('GET', SHEET_URL + "?" + url_params, true);
+
+	request.onload = function() {
+	  if (request.status >= 200 && request.status < 400) {
+	    // Success!
+	    var resp = request.responseText;
+	  } else {
+	    // We reached our target server, but it returned an error
+	  }
+	};
+
+	request.onerror = function() {
+	  console.log(request)
+	  // There was a connection error of some sort
+	};
+
+	request.send();
+	
+	// Actually handle the command
 	switch (cmd) {
 	case 'clear':
 	  terminal.clear();
