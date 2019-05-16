@@ -19,3 +19,7 @@ pre {
     padding: 16px !important;  /* Narrower margins for mobile */
   }
 }
+
+.reveal li {
+  font-size: 30px;
+}
