@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Neural Processes</title>
+<meta name="author" content="(Christabella Irwanto)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/serif.css" id="theme"/>
+
+<link rel="stylesheet" href="./custom.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/css/zenburn.css"/>
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section>
+<section id="slide-sec-">
+<h2 id="orgd692a15">Neural Processes for Image Completion 🎨🖌</h2>
+<p>
+<i>Presented by Christabella Irwanto</i>
+</p>
+
+<ul>
+<li>🔗 <a href="http://tiny.cc/np_post">tiny.cc/np_post</a></li>
+<li>🔗 <a href="https://tiny.cc/np_slides">tiny.cc/np_slides</a></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-">
+<h2 id="orga0a99e4">Agenda 🗒</h2>
+<ul>
+<li class="fragment appear">Motivation</li>
+<li class="fragment appear">Related work</li>
+<li class="fragment appear">Neural process variants</li>
+<li class="fragment appear">Experiments</li>
+<li class="fragment appear">Key learnings</li>
+<li class="fragment appear">Conclusion</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-">
+<h2 id="orge031e54">Motivation💡</h2>
+<ul>
+<li class="fragment appear">Two popular approaches to function approximation in machine learning
+<ol>
+<li><b>Neural networks (NNs)</b></li>
+<li>Bayesian inference on stochastic processes, most common being <b>Gaussian processes (GP)</b></li>
+
+</ol></li>
+<li class="fragment appear">Combine the best of GP’s and NN’s 🌈</li>
+
+</ul>
+</section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orgccf8e6b">Deep neural networks (NN)</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/screenshot_20190516_164956.png" alt="screenshot_20190516_164956.png" width="400" />
+      </p>
+    </div>
+    <ul>
+      <li class="fragment appear">Training of parametric function via gradient descent</li>
+      <li class="fragment appear">👍 Excel at function approximation
+	<ul>
+    <li class="fragment appear">🙁 Tends to need a lot of training data</li>
+    <li class="fragment appear">🙁 <i>(why?)</i> Prior knowledge can only be specified in rather limited ways, e.g. architecture</li>
+
+</ul></li>
+<li class="fragment appear">👍 Fast forward-passes at test-time
+  <ul>
+    <li class="fragment appear">🙁 Inflexible, need to be trained from scratch for new functions</li>
+
+</ul></li>
+
+</ul>
+</section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orga82d0f7">Gaussian processes (GP)</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/Gaussian_Process_Regression_20190516_141200.png" alt="Gaussian_Process_Regression_20190516_141200.png" width="700" />
+      </p>
+    </div>
+    <aside class="notes">
+      <p>
+	<a class='org-ref-reference' href="#wiki:GP">wiki:GP</a>
+      </p>
+
+    </aside>
+    <ul>
+      <li class="fragment appear">Compute prior <span class="underline">distribution over functions</span>, update belief with data, and sample from distribution for predictions
+	<ul>
+	  <li class="fragment appear">Allows <b>reasoning about multiple functions</b></li>
+	  <li class="fragment appear">Captures covariability in outputs given inputs</li>
+
+      </ul></li>
+      <li class="fragment appear">👍 Encode knowledge in prior stochastic process
+	<ul>
+	  <li class="fragment appear">🙁 Kernels predefined in restricted functional forms</li>
+
+      </ul></li>
+      <li class="fragment appear">🙁 Computationally <b>expensive</b> for large datasets</li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orgb680cc0">Best of both worlds 🙌</h3>
+    <ul>
+      <li class="fragment appear">Neural processes (<a class='org-ref-reference' href="#NP">NP</a>,<a class='org-ref-reference' href="#CNP">CNP</a>) are a class of NN-based models that approximate stochastic processes</li>
+      <li class="fragment appear">Like GPs, NPs
+	<ul>
+	  <li class="fragment appear">model <span class="underline">distributions over functions</span></li>
+	  <li class="fragment appear">provide <span class="underline">uncertainty estimates</span></li>
+	  <li class="fragment appear">are more <span class="underline">flexible</span> at test time</li>
+
+      </ul></li>
+      <li class="fragment appear">Unlike GPs, NPs
+	<ul>
+	  <li class="fragment appear">learn an <span class="underline">implicit kernel</span> from the data directly</li>
+	  <li class="fragment appear"><span class="underline">computationally efficient</span> at training and prediction (like NNs)</li>
+
+      </ul></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orgf72188b">Meta-learning</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/two_scenarios_20190516_125737.png" alt="two_scenarios_20190516_125737.png" />
+      </p>
+    </div>
+    <ul>
+      <li class="fragment appear">Deep learning only approximates <span class="underline">one function</span></li>
+      <li class="fragment appear">Meta-learning algorithms try to approximate <span class="underline">distributions over functions</span></li>
+      <li class="fragment appear">Often implemented as deep generative models that do few-shot estimations of underlying density of the data, like NPs</li>
+      <li class="fragment appear">NPs constitute a high-level abstraction; <b>reusable for multiple tasks</b></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org0203d7c">Image completion task</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/screenshot_20190516_171149.png" alt="screenshot_20190516_171149.png" width="400" />
+      </p>
+    </div>
+    <aside class="notes">
+      <p>
+	Figure 5 from <a class='org-ref-reference' href="#CNP">CNP</a>
+      </p>
+
+    </aside>
+    <ul>
+      <li class="fragment appear">Regression over functions in \(f: [0,1]^2 \rightarrow [0,1]^C\)
+	<ul>
+	  <li>\(f\) accepts <b>pixel coordinate pairs</b> normalized to \([0, 1]\)</li>
+	  <li>\(f\) outputs <b>channel intensities</b> at input coordinates</li>
+
+      </ul></li>
+      <li class="fragment appear">Task is not an end in itself (as a generative model)
+	<ul>
+	  <li><span class="underline">Complex 2-D functions easy to evaluate visually</span></li>
+
+      </ul></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h2 id="orgbc4810b">Neural process variants</h2>
+    <ul>
+      <li class="fragment appear">Conditional neural process (CNP)</li>
+      <li class="fragment appear">Latent variable model of CNP</li>
+      <li class="fragment appear">Neural process (NP)</li>
+      <li class="fragment appear">Attentive neural process (ANP)</li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org610c235">Conditional neural process (CNP)</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/screenshot_20190516_234822.png" alt="screenshot_20190516_234822.png" width="400" />
+      </p>
+    </div>
+    <aside class="notes">
+      <p>
+	Architecture of CNP from <a class='org-ref-reference' href="#github:deepmind">github:deepmind</a>
+      </p>
+
+    </aside>
+    <ul>
+      <li class="fragment appear">Accept <b>pairs of context points</b> \((x_i, y_i)\) (coordinates and pixel intensity)</li>
+      <li class="fragment appear">\((x_i, y_i)\) passed through <span class="underline">encoder</span> \(e\) to get <b>individual representations</b> \(r_i\)</li>
+      <li class="fragment appear">\(r_i\) combined with <span class="underline">aggregator</span> \(a\) into <b>global representation</b> \(r\)</li>
+      <li class="fragment appear"><span class="underline">Decoder</span> \(d\) accepts both \(r\) and <b>target location</b> \(x_T\)</li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orge42e6a7">Training of CNP</h3>
+    <ul>
+      <li>CNP is approximate conditional stochastic process \(Q_\theta\)</li>
+      <li>Minimize negative log-likelihood of the targets' ground truth outputs \(y_i\) under the predicted distribution \(f : X \rightarrow Y = \mathcal{N}(\mu_i, \sigma_i^2)\)</li>
+
+    </ul>
+    <p>
+      \[
+      \mathcal { L } ( \theta ) = - \mathbb { E } _ { f \sim P } \left[ \mathbb { E } _ { N } \left[ \log Q _ { \theta } \left( \left\{ y _ { i } \right\} _ { i = 0 } ^ { n - 1 } | O _ { N } , \left\{ x _ { i } \right\} _ { i = 0 } ^ { n - 1 } \right) \right] \right]
+      \] 
+    </p>
+    <div class="org-src-container">
+
+      <pre><code class="python" >dist = tf.contrib.distributions.MultivariateNormalDiag(
+	  loc=mu, scale_diag=sigma)
+	  log_p = dist.log_prob(target_y)
+	  loss = -tf.reduce_mean(log_prob)
+	  train_step = optimizer.minimize(loss)
+      </code></pre>
+    </div>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org5724844">CNP paper results</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/screenshot_20190509_114630.png" alt="screenshot_20190509_114630.png" width="500" />
+      </p>
+    </div>
+    <aside class="notes">
+      <p>
+	Figure 3a from CNP <a class='org-ref-reference' href="#CNP">CNP</a>
+      </p>
+
+    </aside>
+    <ul>
+      <li class="fragment appear">Outperforms kNN and GP (MSE) <b>when # context points &lt; 50%</b></li>
+      <li class="fragment appear">Order of context points is less important (factorized model?)</li>
+      <li class="fragment appear">\(\therefore\) CNPs learn a <b>good data-specific “prior”</b> (few points needed)</li>
+      <li class="fragment appear"><b>Uncertainty estimation</b>: variance gets localized to digit’s edges</li>
+      <li class="fragment appear">But… 🙁 <i>cannot produce coherent samples</i>
+	<ul>
+	  <li>\(\mu_i\) and \(\sigma_i\) will always be same given same \(\left\{ (x_i, y_i) \right\} _ { i = 1 } ^ { C }\)</li>
+	  <li>Even if observed pixels could conform to 1,4, and 7, CNP can only output incoherent image of mean and variance of all those digits</li>
+
+      </ul></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org8ba8851">Latent formulation of CNP</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/screenshot_20190516_234937.png" alt="screenshot_20190516_234937.png" width="500" />
+      </p>
+    </div>
+    <aside class="notes">
+      <p>
+	Architecture of CNP latent variable model, modified from <a class='org-ref-reference' href="#github:deepmind">github:deepmind</a>
+      </p>
+
+    </aside>
+    <ul>
+      <li class="fragment appear">Let \(r\) parameterize distribution of global latent variable, \(z \sim \mathcal{N}(\mu(r), I \sigma(r))\).</li>
+      <li class="fragment appear">\(z\) is sampled once and passed into decoder \(d\)</li>
+      <li class="fragment appear">\(z\) captures the <b>global uncertainty</b>
+	<ul>
+	  <li>allows <span class="underline">sampling on global level</span> (one function at a time) rather than locally (one output \(y_i\) for each input \(x_i\) at a time)</li>
+
+      </ul></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orgaadbaf5">Implications for image completion</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/screenshot_20190516_235438.png" alt="screenshot_20190516_235438.png" />
+      </p>
+    </div>
+    <aside class="notes">
+      <p>
+	Figure 6 from <a class='org-ref-reference' href="#CNP">CNP</a>
+      </p>
+
+    </aside>
+    <ul>
+      <li>Latent CNPs (and NPs) <span class="underline">can produce <b>different function samples</b> for the same conditioned observations</span>
+	<ul>
+	  <li class="fragment appear">Produce different digits/faces when sampled repeatedly</li>
+	  <li class="fragment appear">Whereas CNPs just output (roughly) the mean of all digits/faces</li>
+
+      </ul></li>
+
+    </ul>
+
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org5912e4b">Training of latent CNP</h3>
+    <p>
+      \[\text {ELBO} = \mathbb{E}_{q(z | C, T)} \left[ \sum_{t=1}^T \log p(y_t^{\ast} | z, x_t^{\ast}) + \log \frac{q(z | C)}{q(z | C, T)} \right]\]
+    </p>
+    <ul>
+      <li class="fragment appear">Like VAE, maximize variational lower bound of log-likelihood</li>
+      <li class="fragment appear"><span class="underline">First term</span>: expected log-likelihood of \(y_t\) under approximate posterior</li>
+      <li class="fragment appear"><span class="underline">Second term</span>: negative <b>KL divergence</b> between prior and posterior
+	<ul>
+	  <li class="fragment appear">Instead of a Gaussian prior \(p(z)\), have conditional prior \(p(z|C)\) on context \(C \subset X \times Y\)
+	    <ul>
+	      <li>Cannot access \(p(z|C)\) since it depends on encoder \(h\); use approximate \(q(z|C)\)</li>
+
+	  </ul></li>
+	  <li class="fragment appear">Gaussian posterior \(p(z|C, T)\) on both context \(C\) and targets \(T \subset X\)</li>
+
+      </ul></li>
+
+    </ul>
+
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org74d5334">Neural process (NP)</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/screenshot_20190517_012125.png" alt="screenshot_20190517_012125.png" width="600" />
+      </p>
+    </div>
+    <aside class="notes">
+      <p>
+	NP diagram from <a class='org-ref-reference' href="#github:deepmind">github:deepmind</a>
+      </p>
+
+    </aside>
+    <ul>
+      <li class="fragment appear">NPs are a generalization of CNPs, <b>very similar to latent CNP</b></li>
+      <li class="fragment appear"><b>But</b> <span class="underline">\(e\) is split into two different encoders</span> to produce the global representation \(r_c\) and a separate code \(s_c\) that parameterises  \(z\) (instead of directly parameterising \(z\) with \(r\))</li>
+      <li class="fragment appear"><span class="underline">\(d\) also accepts \(r\)</span>, not only target location \(x_*\) (i.e. \(x_T\)) and \(z\)</li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org3d70338">NPs underfit</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/screenshot_20190517_094903.png" alt="screenshot_20190517_094903.png" />
+      </p>
+    </div>
+    <aside class="notes">
+      <p>
+	Figure 1 from <a class='org-ref-reference' href="#kim19_atten_neural_proces">kim19_atten_neural_proces</a>
+      </p>
+
+    </aside>
+    <ul>
+      <li class="fragment appear">🙁 NPs tend to <span class="underline">underfit the context set</span>
+	<ul>
+	  <li class="fragment appear">Inaccurate predictive means and overestimated variances</li>
+	  <li class="fragment appear">Imperfect reconstruction of top-half</li>
+
+      </ul></li>
+      <li class="fragment appear">Mean-aggregation in encoder acts as a <span class="underline">bottleneck</span>
+	<ul>
+	  <li><b>Same weight</b> given to each context point</li>
+	  <li>Difficult for decoder to <b>learn which context points are relevant</b> for a given target</li>
+
+      </ul></li>
+
+    </ul>
+
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org071f16d">Attentive neural process (ANP)</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/screenshot_20190517_095113.png" alt="screenshot_20190517_095113.png" width="500" />
+      </p>
+    </div>
+    <ul>
+      <li class="fragment appear">Aggregator is replaced by <span class="underline">cross-attention</span>
+	<ul>
+	  <li>Each query can <b>Rattend more closely to relevant context points</b></li>
+	  <li>Equivalent to uniform attention in NP</li>
+
+      </ul></li>
+      <li class="fragment appear">Encoder MLP’s replaced with <span class="underline">self-attention</span>
+	<ul>
+	  <li>To <b>model interactions between context points</b></li>
+
+      </ul></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org990933a">Related work</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/screenshot_20190509_115751.png" alt="screenshot_20190509_115751.png" />
+      </p>
+    </div>
+    <aside class="notes">
+      <p>
+	Modified from Figure 2 in <a class='org-ref-reference' href="#NP">NP</a>
+      </p>
+
+    </aside>
+    <ul>
+      <li class="fragment appear">a) and b) <b>do not allow for targeted sampling</b> at positions \(x_T\)
+	<ul>
+	  <li>Can only generate i.i.d. samples from estimated output density \(y_T\)</li>
+
+      </ul></li>
+      <li class="fragment appear">CNP <b>cannot model global uncertainty</b> /distribution over functions; only one \(y_T\) given \(y_C, x_C, x_T\)
+	<ul>
+	  <li class="fragment appear">c), d), and e) can sample different functions</li>
+	  <li class="fragment appear">GPs contain kernel predicting the covariance between \(C\) and \(T\), forming a multivariate Gaussian producing samples</li>
+
+      </ul></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h2 id="orga93b42b">Experiments</h2>
+    <ul>
+      <li>CNP latent variable model in PyTorch for \(28 \times 28\) monochrome MNIST images</li>
+
+    </ul>
+    <div class="org-src-container">
+
+      <pre><code class="python" >(e_1): Linear(in_features=3, out_features=400, bias=True)
+	  (e_2): Linear(in_features=400, out_features=400, bias=True)
+	  (e_3): Linear(in_features=400, out_features=128, bias=True)
+	  (r_to_z_mean): Linear(in_features=128, out_features=128, bias=True)
+	  (r_to_z_logvar): Linear(in_features=128, out_features=128, bias=True)
+	  (d_1): Linear(in_features=130, out_features=400, bias=True)
+	  (d_2): Linear(in_features=400, out_features=400, bias=True)
+	  (d_3): Linear(in_features=400, out_features=400, bias=True)
+	  (d_4): Linear(in_features=400, out_features=400, bias=True)
+	  (d_5): Linear(in_features=400, out_features=1, bias=True)
+      </code></pre>
+    </div>
+    <ul>
+      <li>Architecture modified from unofficial PyTorch implementation <a class='org-ref-reference' href="#github:geniki">github:geniki</a></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org65005dd">Training</h3>
+    <p>
+      400 epochs took 7 hours on NVIDIA Quadro P5000 GPU (Paniikki computer)
+      <img src="/ox-hugo/CNP_mnist.png" alt="CNP_mnist.png" />
+    </p>
+
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org06f2053">Results</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/screenshot_20190517_033302.png" alt="screenshot_20190517_033302.png" width="450" />
+      </p>
+    </div>
+    <ul>
+      <li>Blue pixels are unobserved; 5 samples per set of context points</li>
+
+    </ul>
+
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h4 id="orgfe77b05">10 and 100 context points at epoch 400</h4>
+    <p>
+      <img src="/ox-hugo/ep_400_cps_10.png" alt="ep_400_cps_10.png" />
+      <img src="/ox-hugo/ep_400_cps_100.png" alt="ep_400_cps_100.png" />
+    </p>
+    <ul>
+      <li>With only 10 context points, generated images are sometimes incoherent</li>
+      <li>Increasing to 100 results in more coherent images</li>
+
+    </ul>
+
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h4 id="org867fac8">300 context points</h4>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/ep_400_cps_300.png" alt="ep_400_cps_300.png" />
+      </p>
+    </div>
+    <ul>
+      <li>Only 38% observed, so still <b>some variation in the different coherent samples drawn</b>
+	<ul>
+	  <li>E.g. in the last column, images of both "3" and "9" are generated that conform to those 100 observed pixels</li>
+
+      </ul></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h4 id="org5f7b7f3">784 (100%) context points</h4>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/ep_400_cps_784.png" alt="ep_400_cps_784.png" />
+      </p>
+    </div>
+    <ul>
+      <li class="fragment appear">When fully observed, <b>uncertainty is reduced</b> and the samples converge to a single estimate</li>
+      <li class="fragment appear">Even with full observation, <span class="underline">pixel-perfect reconstruction is not achieved</span> due to bottleneck at representation level</li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orged01e66">What about those nice celebrity faces?</h3>
+    <ul>
+      <li class="fragment appear">Unable to reproduce results on more complex \(64 \times 64\) RGB CelebA images</li>
+      <li class="fragment appear">Problems with convergence and lack of implementation details in CNP paper</li>
+
+    </ul>
+
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h2 id="orgac3c9a4">Key learnings and findings</h2>
+    <ul>
+      <li class="fragment appear">Paper omits many implementation details; some details can be filled in with experience and some cannot</li>
+      <li class="fragment appear">Would have been lost without open-source implementations
+	<ul>
+	  <li>E.g. How does \(r\) parameterize \(z\)? Further MLP layers that map \(r\) to the parameters of Gaussian \(z\)</li>
+	  <li>Tricks like <code>sigma = 0.1 + 0.9 * tf.sigmoid(log_sigma)</code> to avoid zero standard deviation…</li>
+
+      </ul></li>
+      <li class="fragment appear">Many ways to achieve similar outcomes
+	<ul>
+	  <li>E.g. using or not using VAE reparameterization trick when sampling latent \(z\)</li>
+
+      </ul></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h2 id="org99563a5">Conclusion ✨</h2>
+    <ul>
+      <li class="fragment appear">Incorporates ideas from GP inference into a NN training regime to overcome certain drawbacks of both</li>
+      <li class="fragment appear">Possible to <b>achieve desirable GP-like behaviour</b>, e.g. predictive uncertainties, encapsulating high-level statistics of a family of functions
+	<ul>
+	  <li>However, <b>challenging to interpret</b> since effects are implicit</li>
+
+      </ul></li>
+      <li class="fragment appear">NPs are ultimately still neural network-based approximations and suffer from problems such as the difficulty of <span class="underline">hyperparameter tuning/model selection</span></li>
+
+    </ul>
+
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h2 id="org44a6b00">Lingering doubts 🤔</h2>
+    <ul>
+      <li class="fragment appear">Section 3.2 Meta-learning of CNP: "the latent variant of CNP can also be seen as an approximated amortized version of Bayesian DL (Gal &amp; Ghahramani, 2016; Blundell et al., 2015; Louizos et al., 2017; Louizos &amp; Welling, 2017)"</li>
+
+    </ul>
+    <aside class="notes">
+      <p>
+	Dropout as a bayesian approximation, Weight uncertainty in neural networks, Bayesian compression for DL; Multiplicative normalizing flows for variational bayesian neural networks
+      </p>
+
+    </aside>
+    <ul>
+      <li class="fragment appear">“CNPs can only model a factored prediction of the mean and the variances, disregarding covariance between target points”
+	<ul>
+	  <li>“Since CNP returns factored outputs, the best prediction it can produce given limited context information is to average over all possible predictions that agree with the context.”</li>
+
+      </ul></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orgaf80159">Inference in NP</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/schema3_20190517_022722.png" alt="schema3_20190517_022722.png" width="600" />
+      </p>
+    </div>
+    <aside class="notes">
+      <p>
+	From <a class='org-ref-reference' href="#kasparmartens:online">kasparmartens:online</a>
+      </p>
+
+    </aside>
+    <ul>
+      <li>How does the approximate posterior look like in terms of the network architecture?</li>
+      <li>How does conditional prior \(p(z|C)\) depend on encoder \(h\) (making it intractable)?</li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h2 id="org7be32d8"><h1 class='org-ref-bib-h1'>Bibliography</h1>
+      <ul class='org-ref-bib'><li><a id="wiki:GP">[wiki:GP]</a> <a name="wiki:GP"></a>@misc wiki:GP,
+	  author = "Wikipedia contributors",
+	  title = "Gaussian process -- Wikipedia, The Free Encyclopedia",
+	  year = "2019",
+	  url = "https://en.wikipedia.org/w/index.php?title=Gaussian_process&oldid=896566703",
+	  note = "[Online; accessed 16-May-2019]"
+	</li>
+	<li><a id="NP">[NP]</a> <a name="NP"></a>Garnelo, Schwarz, Rosenbaum, Dan, Viola, Rezende, , Eslami & Teh, Neural Processes, <i>CoRR</i>,  (2018). <a href="http://arxiv.org/abs/1807.01622v1">link</a>.</li>
+	<li><a id="CNP">[CNP]</a> <a name="CNP"></a>Garnelo, Rosenbaum, Maddison, Chris, Ramalho, Saxton, , Shanahan, Teh, Rezende, Danilo & Eslami, Conditional Neural Processes, <i>CoRR</i>,  (2018). <a href="http://arxiv.org/abs/1807.01613v1">link</a>.</li>
+	<li><a id="github:deepmind">[github:deepmind]</a> <a name="github:deepmind"></a>@miscgithub:deepmind,
+	  author = DeepMind,
+	  title = Open-source implementations of Neural Process variants,
+	  howpublished = \urlhttps://github.com/deepmind/neural-processes,
+	  month = ,
+	  year = ,
+	  note = (Accessed on 05/08/2019)
+	</li>
+	<li><a id="kim19_atten_neural_proces">[kim19_atten_neural_proces]</a> <a name="kim19_atten_neural_proces"></a>Kim, Mnih, Schwarz, , Garnelo, Eslami, Rosenbaum, Dan, Vinyals & Teh, Attentive Neural Processes, <i>CoRR</i>,  (2019). <a href="http://arxiv.org/abs/1901.05761v1">link</a>.</li>
+	<li><a id="github:geniki">[github:geniki]</a> <a name="github:geniki"></a>@miscgithub:geniki,
+	  author = geniki,
+	  title = PyTorch implementation of Neural Processes,
+	  howpublished = \urlhttps://github.com/geniki/neural-processes/,
+	  month = ,
+	  year = ,
+	  note = (Accessed on 05/17/2019)
+	</li>
+	<li><a id="kasparmartens:online">[kasparmartens:online]</a> <a name="kasparmartens:online"></a>@misckasparmartens:online,
+	  author = Kaspar Märtens,
+	  title = Neural Processes as distributions over functions | Kaspar Märtens | PhD student in Statistical Machine Learning,
+	  howpublished = \urlhttps://kasparmartens.rbind.io/post/np/,
+	  month = ,
+	  year = ,
+	  note = (Accessed on 05/17/2019)
+	</li>
+    </ul></h2>
+  </section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+
+<script>
+  // Full list of configuration options available here:
+  // https://github.com/hakimel/reveal.js#configuration
+  Reveal.initialize({
+
+    controls: false,
+    progress: true,
+    history: false,
+    center: true,
+    slideNumber: 'c',
+    rollingLinks: false,
+    keyboard: true,
+    overview: true,
+
+    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/fade/none
+    transitionSpeed: 'default',
+    multiplex: {
+      secret: '', // null if client
+      id: '', // id, obtained from socket.io server
+      url: '' // Location of socket.io server
+    },
+
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+      { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }]
+  });
+</script>
+</body>
+</html>
