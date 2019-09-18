@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title>Neural Ordinary Differential Equations</title>
+    <meta name="author" content="(Christabella Irwanto)"/>
+    <style type="text/css">
+      .underline { text-decoration: underline; }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/serif.css" id="theme"/>
+
+    <link rel="stylesheet" href="https://bella.cc/css/custom.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/css/zenburn.css"/>
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+      if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+      }
+    </script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+	<section>
+	  <section id="slide-sec-">
+	    <h2 id="org8d44c88">Neural Ordinary Differential Equations 🐰🦊</h2>
+	    <p>
+    <i>Presented by Christabella Irwanto</i>
+  </p>
+</section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h2 id="orgae2c8ce">Neural ODE</h2>
+    <ul>
+      <li class="fragment appear">A new model class, can be used as
+	<ul>
+	  <li>Continuous-depth residual networks</li>
+	  <li>Continuous-time latent variable models</li>
+
+      </ul></li>
+      <li class="fragment appear">Propose continuous normalizing flows, generative model</li>
+      <li class="fragment appear">Scalable backpropagation through ODE solver</li>
+      <li class="fragment appear">Paper shows various proofs of concept</li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h2 id="orgc8c2288">ODE? 😕</h2>
+    <blockquote nil>
+      <p>
+	“In the 300 years since Newton, mankind has come to realize that the laws of physics are always expressed in the language of <b>differential equations</b>.” 
+      </p>
+      <ul>
+	<li>Steven Strogatz</li>
+
+      </ul>
+    </blockquote>
+    <ul>
+      <li class="fragment appear">An ODE is an equation involving an unknown function \(y=f(t)\) and at least one of its derivatives \(y’, y''\) etc.
+	<ul>
+	  <li>Univariate functions (“time”) vs partial DE’s with multivariate input</li>
+	  <li>Solve ODE by finding satisfying function \(f\)</li>
+
+      </ul></li>
+      <li class="fragment appear">Useful whenever it’s easier to describe change than absolute quantity, e.g. in many dynamical systems (☢, 🏀, 💊)</li>
+
+    </ul>
+    <aside class="notes">
+      <ul>
+	<li>E.g. radioactive decay, kinematic systems, or drug concentration in a body, over time</li>
+
+      </ul>
+
+    </aside>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org59d75b4">Bunny example 🐇</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/rabbit-overpopulation_2019-09-11_12-50-04.jpg" alt="rabbit-overpopulation_2019-09-11_12-50-04.jpg" width="500" />
+      </p>
+    </div>
+    <ul>
+      <li>Model system of dynamics with first-order ODE, \(B'(t) = \frac{dB}{dt} = rB\)
+	<ul>
+	  <li>\(B(t)\): bunny population at time \(t\)</li>
+	  <li>\(r\): growth rate of new bunnies for every bunny, per \(\Delta t\)</li>
+
+      </ul></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org2319a6c">Visualize ODE</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/screenshot_2019-09-09_13-37-00.png" alt="screenshot_2019-09-09_13-37-00.png" width="300" />
+      </p>
+    </div>
+
+    <p>
+      Slope field of derivative for each \((B, t)\)
+    </p>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org0b341ab">Solve ODE</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/screenshot_2019-09-09_13-37-00-copy.png" alt="screenshot_2019-09-09_13-37-00-copy.png" width="300" />
+      </p>
+    </div>
+
+    <ul>
+      <li>Analytical solution via integration is \(B(t) = B(t_0)e^{rt}\)</li>
+      <li>Known initial value \(B(t_0)\)</li>
+
+    </ul>
+    <aside class="notes">
+      <ul>
+	<li>Infinitely many solution, but generally only one satisfying initial conditions</li>
+
+      </ul>
+
+    </aside>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orge79df4f">Numerical ODE solver</h3>
+    <ul>
+      <li>Not all ODE’s have a closed form function satisfying it
+	<ul>
+	  <li>Even if so, it’s very hard finding solutions</li>
+
+      </ul></li>
+      <li>We have to numerically solve the ODE
+	<ul>
+	  <li>Euler’s method, Runge-Kutta methods</li>
+
+      </ul></li>
+
+    </ul>
+
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h2 id="orgc06ddc9">Enter neural networks</h2>
+    <ul>
+      <li>Regular neural networks transform input with a series of functions \(f\),</li>
+
+    </ul>
+    <p>
+      \(\mathbf{h}_{t+1} = f(\mathbf{h}_t)\)
+    </p>
+    <ul>
+      <li class="fragment appear">Each layer introduces error that compounds</li>
+      <li class="fragment appear">Mitigate this by adding more layers, and limit the complexity of each step</li>
+      <li class="fragment appear">Infinite layers, with infinitesimal step-changes?</li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orgc42d406">Resnet</h3>
+    <ul>
+      <li class="fragment appear">Instead of \(\mathbf{h}_{t+1} = f(\mathbf{h}_t)\), learn \(\mathbf{h}_{t+1} = \mathbf{h}_t + f(\mathbf{h}_t, \theta_t)\)</li>
+      <li class="fragment appear">Similarly, <span class="underline">RNN decoders</span> and <span class="underline">normalizing flows</span> build complicated transformations by chaining sequences</li>
+      <li class="fragment appear">Looks like Euler discretization of continuous transformation</li>
+
+    </ul>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/discrete_hidden_state_2019-09-11_14-15-45.png" alt="discrete_hidden_state_2019-09-11_14-15-45.png" width="300" />
+      </p>
+    </div>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h2 id="org3197d61">Neural ODE</h2>
+    <ul>
+      <li class="fragment appear">\(\mathbf{h}_{t+1} = \mathbf{h}_t + f(\mathbf{h}_t, \theta_t)\)</li>
+      <li class="fragment appear">In the continuous limit w.r.t. depth \(t\), parameterize hidden state dynamics with an ODE specified by a neural network:
+	<ul>
+	  <li>\(\frac{d\mathbf{h}(t)}{dt} = f(\mathbf{h}(t), t, \theta)\)</li>
+	  <li>Neural network \(f\) has parameters \(\theta\);</li>
+
+      </ul></li>
+      <li class="fragment appear">Function approximation now over a continuous hidden state dynamic</li>
+
+    </ul>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/neural_ode_func_approx_2019-09-11_14-29-24.png" alt="neural_ode_func_approx_2019-09-11_14-29-24.png" width="300" />
+      </p>
+    </div>
+
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orgdf21f1e">Resnet vs neural ODE</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/ode_networks_1_2019-09-11_12-44-23.png" alt="ode_networks_1_2019-09-11_12-44-23.png" />
+      </p>
+    </div>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org8d549da">Forward pass</h3>
+    <ul>
+      <li>🐰 Evaluate \(\mathbf{h}(t_1)\) by solving the integral
+	<ul>
+	  <li>\(\mathbf{h}(t) = \int f(t, \mathbf{h}(t), \theta_t)dt\)</li>
+
+      </ul></li>
+      <li>If we use Euler’s method, we get exactly the residual state update!</li>
+
+    </ul>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/neural_ode_func_approx_2019-09-11_14-29-24.png" alt="neural_ode_func_approx_2019-09-11_14-29-24.png" width="300" />
+      </p>
+    </div>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orgc97c990">Numerical ODE solver</h3>
+    <ul>
+      <li>Paper solves ODE initial value problems numerically with implicit Adams method
+	<ul>
+	  <li>Not unconditionally stable</li>
+	  <li>Current set of PyTorch ODE solvers only applicable to (some) non-stiff ODEs</li>
+
+      </ul></li>
+      <li>Without a reversible integrator (implicit Adams is not reversible), method drifts from the true solution doing a backwards integration</li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org5499972">Advantages</h3>
+    <ul>
+      <li>Use existing efficient solvers to integrate neural network dynamics</li>
+      <li>Memory cost is \(O(1)\) due to reversibility of ODE net</li>
+      <li>Tuning ODE solver tolerance gives trade-off between accuracy and speed
+	<ul>
+	  <li>More fine-grained tuning,versus using lower precision floating point numbers</li>
+
+      </ul></li>
+
+    </ul>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/screenshot_2019-09-11_15-23-28.png" alt="screenshot_2019-09-11_15-23-28.png" width="400" />
+      </p>
+    </div>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orgc31543b">Backward pass</h3>
+    <aside class="notes">
+      <ul>
+	<li>How do we train the function in the ODE?</li>
+
+      </ul>
+
+    </aside>
+    <ul>
+      <li>Output (hidden state at final depth) is used to compute loss</li>
+
+    </ul>
+    <div>
+      \begin{equation}
+      L(\mathbf{z}(t_1)) = L\left( \mathbf{z}(t_0) + \int_{t_0}^{t_1}
+      f(\mathbf{z}(t), t, \theta)dt \right) =
+      L(\textrm{ODESolve}(\mathbf{z}(t_0), f, t_0, t_1, \theta))
+      \end{equation}
+
+    </div>
+    <ul>
+      <li>Scalable backpropagation through ODE solver with adjoint method
+	<ul>
+	  <li>Vectorization to compute multiple derivatives in single call</li>
+
+      </ul></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orgd0b2bd5">How to train?</h3>
+    <aside class="notes">
+      <ul>
+	<li>Backpropagate through the ODE solver layer</li>
+
+      </ul>
+
+    </aside>
+    <ul>
+      <li>Standard reverse mode chain rule equations in backprop</li>
+      <li>Take continuous time limit of chain rule to recover the adjoint sensitivity equations</li>
+
+    </ul>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/screenshot_2019-09-11_14-07-08.png" alt="screenshot_2019-09-11_14-07-08.png" />
+      </p>
+    </div>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orgcec5f62">Adjoint sensitivity</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/screenshot_2019-09-11_15-39-14.png" alt="screenshot_2019-09-11_15-39-14.png" width="600" />
+      </p>
+    </div>
+    <ul>
+      <li>Reverse-mode differentiation of an ODE solution</li>
+      <li>Solving for adjoint state with same ODE solver used in forward pass</li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orgc58d850">Results of ODE-Net vs Resnet</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/screenshot_2019-09-11_15-40-28.png" alt="screenshot_2019-09-11_15-40-28.png" width="300" />
+      </p>
+    </div>
+    <ul>
+      <li>Fewer parameters with same accuracy</li>
+      <li>However, harder to train, tricky to implement mini-batching</li>
+      <li>Can't control the training time cost, computational complexity increases</li>
+
+    </ul>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/screenshot_2019-09-11_15-41-21.png" alt="screenshot_2019-09-11_15-41-21.png" width="200" />
+      </p>
+    </div>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h2 id="orgab7b9ae">Generative latent time-series model</h2>
+    <ul>
+      <li>Continuous-time approach to modeling time series</li>
+
+    </ul>
+    <aside class="notes">
+      <ul>
+	<li>Standard VAE algorithm with <code>ODESolve</code> as decoder</li>
+
+      </ul>
+
+    </aside>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/screenshot_2019-09-11_15-44-23.png" alt="screenshot_2019-09-11_15-44-23.png" width="700" />
+      </p>
+    </div>
+    <aside class="notes">
+      <ul>
+	<li>Using ODEs as a generative model allows us to make predictions for arbitrary time points \(t_1 \ldots t_M\) on a continuous timeline</li>
+
+      </ul>
+
+    </aside>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orga07d2b9">Results of experiments</h3>
+    <ul>
+      <li>Spiral dataset at irregular time intervals, with Gaussian noise</li>
+
+    </ul>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/screenshot_2019-09-11_15-46-55.png" alt="screenshot_2019-09-11_15-46-55.png" width="400" />
+      </p>
+    </div>
+
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org95c761b">Advantages</h3>
+    <ul>
+      <li>For supervised learning, its main benefit is extra flexibility in the speed/precision tradeoff.</li>
+      <li>For time-series problems, allow handling of data at irregular intervals</li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h2 id="org3d7104b">Normalizing flows</h2>
+    <ul>
+      <li>Normalizing flows define a parametric density by iteratively transforming Gaussian sample:</li>
+
+    </ul>
+    <div>
+      \begin{align}
+      z_0 &\sim Normal(0, I) \\
+      z_1 &= f_0(z_0) \\
+      … \\
+      x  &= f_t(z_t)
+      \end{align}
+
+    </div>
+    <ul>
+      <li>Use the change of variables formula to compute p(x):
+	\(log p(z_{t+1}) = log p(z_t) - log | det \frac{df(z_t)}{dz_t} |\)</li>
+      <li>Paper proposes continuous-time version, Continuous NF</li>
+      <li>Derived continuous-time analogue of change of variables formula:</li>
+
+    </ul>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/screenshot_2019-09-11_16-01-36.png" alt="screenshot_2019-09-11_16-01-36.png" width="450" />
+      </p>
+    </div>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orge6102f4">Results</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/screenshot_2019-09-11_16-14-38.png" alt="screenshot_2019-09-11_16-14-38.png" width="700" />
+      </p>
+    </div>
+    <ul>
+      <li>Compare Continuous NF to NF family of models on density estimation, image generation, and variational inference</li>
+      <li>Achieve state-of-the-art among exact likelihood methods with efficient sampling, in follow-up paper <a class='org-ref-reference' href="#grathwohl18">grathwohl18</a></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orgffb3fed">Pros and cons</h3>
+
+    <div class="figure">
+      <p><img src="/ox-hugo/neural_ode/screenshot_2019-09-11_16-49-50.png" alt="screenshot_2019-09-11_16-49-50.png" />
+      </p>
+    </div>
+    <ul>
+      <li>4-5x slower than other methods (Glow, Real-NVP)</li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h2 id="orgddd957a">Summary</h2>
+    <ul>
+      <li>New and novel application of differential equation solvers as part of a neural net</li>
+      <li>Idea of Resnet/RNN as an Euler discretization is a neat solution</li>
+      <li>Much work can be done on both numerical differential equation and ML side</li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h2 id="org4270bb1">References</h2>
+    <div class="outline-text-2" id="text-org4270bb1">
+    </div>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="orge1fafcf">Code:</h3>
+    <ul>
+      <li><a href="https://nbviewer.jupyter.org/github/urtrial/neural_ode/blob/master/Neural%20ODEs.ipynb">https://nbviewer.jupyter.org/github/urtrial/neural_ode/blob/master/Neural ODEs.ipynb</a></li>
+      <li><a href="https://github.com/kmkolasinski/deep-learning-notes/tree/master/seminars/2019-03-Neural-Ordinary-Differential-Equations">https://github.com/kmkolasinski/deep-learning-notes/tree/master/seminars/2019-03-Neural-Ordinary-Differential-Equations</a> (ODE solver implementations etc.), companion to very <a href="https://docs.google.com/presentation/d/e/2PACX-1vQSh--YqRiXKjkydmoawYOk5e09eCCJvwzrmCLltMIdxDX7r20XEdZUmY6Y-wb1435EtdKYJMR5kKaT/pub?slide=id.g54c31a384d_0_66">awesome slides</a> including adjoint method derivations</li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org185a520">Blogposts</h3>
+    <ul>
+      <li><a href="https://jontysinai.github.io/jekyll/update/2019/01/18/understanding-neural-odes.html">https://jontysinai.github.io/jekyll/update/2019/01/18/understanding-neural-odes.html</a></li>
+      <li><a href="https://blog.acolyer.org/2019/01/09/neural-ordinary-differential-equations/">https://blog.acolyer.org/2019/01/09/neural-ordinary-differential-equations/</a></li>
+      <li><a href="https://braindump.jethro.dev/posts/neural_ode/">https://braindump.jethro.dev/posts/neural_ode/</a></li>
+      <li><a href="https://towardsdatascience.com/neural-odes-breakdown-of-another-deep-learning-breakthrough-3e78c7213795">https://towardsdatascience.com/neural-odes-breakdown-of-another-deep-learning-breakthrough-3e78c7213795</a></li>
+      <li><a href="https://towardsdatascience.com/paper-summary-neural-ordinary-differential-equations-37c4e52df128">https://towardsdatascience.com/paper-summary-neural-ordinary-differential-equations-37c4e52df128</a></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h4 id="org5e0f8c5">For adjoint sensitivity:</h4>
+    <ul>
+      <li><a href="https://rkevingibson.github.io/blog/neural-networks-as-ordinary-differential-equations/">https://rkevingibson.github.io/blog/neural-networks-as-ordinary-differential-equations/</a></li>
+
+    </ul>
+    <ul>
+      <li><a href="https://news.ycombinator.com/item?id=18676986">https://news.ycombinator.com/item?id=18676986</a></li>
+
+    </ul>
+  </section>
+</section>
+<section>
+  <section id="slide-sec-">
+    <h3 id="org1216d4e">Original content from author(s)</h3>
+    <ul>
+      <li><a href="https://vectorinstitute.ai/wp-content/uploads/2019/03/ode-talk-vector-symposium.pdf">Slides at NeurIPS</a> | <a href="https://www.youtube.com/watch?v=V6nGT0Gakyg">Video from NeurIPS</a></li>
+
+    </ul>
+
+    <p>
+      <h1 class='org-ref-bib-h1'>Bibliography</h1>
+      <ul class='org-ref-bib'><li><a id="grathwohl18">[grathwohl18]</a> <a name="grathwohl18"></a>Will Grathwohl, Ricky Chen, Jesse Bettencourt, Ilya Sutskever & David Duvenaud, FFJORD: Free-form Continuous Dynamics for Scalable Reversible Generative Models, <i></i>,  (2018).</li>
+      </ul> 
+    </p>
+  </section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="https://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+
+<script>
+  // Full list of configuration options available here:
+  // https://github.com/hakimel/reveal.js#configuration
+  Reveal.initialize({
+
+    controls: false,
+    progress: true,
+    history: false,
+    center: true,
+    slideNumber: 'c',
+    rollingLinks: false,
+    keyboard: true,
+    overview: true,
+
+    theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+    transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/fade/none
+    transitionSpeed: 'default',
+    multiplex: {
+      secret: '', // null if client
+      id: '', // id, obtained from socket.io server
+      url: '' // Location of socket.io server
+    },
+
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+      { src: 'https://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }]
+  });
+</script>
+</body>
+</html>
