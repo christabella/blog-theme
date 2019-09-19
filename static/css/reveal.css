@@ -5,3 +5,16 @@
 .reveal table {
   font-size: 60%;
 }
+
+/* For the org environment, used as follows:
+  #+BEGIN_imgcaption
+  ...
+  #+end_imgcaption
+*/
+.imgcaption {
+  font-size: 19pt;
+  margin-top: -40px;
+  opacity: 0.75;
+  text-decoration: underline;
+  font-style: italic;
+}
