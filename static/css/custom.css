@@ -29,7 +29,7 @@ pre {
 ...
 #+end_imgcaption
 */
-.imgcaption {
+div.reveal .imgcaption {
   font-size: 19pt;
   margin-top: -40px;
   opacity: 0.75;
