@@ -21,7 +21,7 @@ pre {
 }
 
 .reveal li {
-  font-size: 29px;
+  font-size: 29px; !important;
 }
 
 /* For the org environment, used as follows:
